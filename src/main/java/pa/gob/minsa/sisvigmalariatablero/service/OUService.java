@@ -227,6 +227,16 @@ public class OUService {
 		return localidad;
 	}
 	
+	public UnidadNotificadora getUnidadNotificadora(Integer ident) {
+		// Retrieve session from Hibernate
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("FROM UnidadNotificadora un where " +
+				"un.ident =:ident");
+		query.setParameter("ident",ident);
+		UnidadNotificadora unidad = (UnidadNotificadora) query.uniqueResult();
+		return unidad;
+	}
+	
 	
 	@SuppressWarnings("unchecked")
 	public List<UnidadNotificadora> getUnidadesNotificadoras(String filtro) {

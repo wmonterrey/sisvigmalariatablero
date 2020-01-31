@@ -51,12 +51,7 @@
           </a>
         </li>
         <li class="sidenav-item map">
-          <a href="<spring:url value="/map/map1/" htmlEscape="true" />" class="sidenav-link"><i class="sidenav-icon ion ion-md-map"></i>
-            <div><spring:message code="maps" /></div>
-          </a>
-        </li>
-        <li class="sidenav-item map2">
-          <a href="<spring:url value="/map/map2/" htmlEscape="true" />" class="sidenav-link"><i class="sidenav-icon ion ion-md-map"></i>
+          <a href="<spring:url value="/map/" htmlEscape="true" />" class="sidenav-link"><i class="sidenav-icon ion ion-md-map"></i>
             <div><spring:message code="maps" /></div>
           </a>
         </li>
@@ -74,6 +69,11 @@
               
             </ul>
             </sec:authorize>
+        </li>
+        <li class="sidenav-item foci">
+          <a href="<spring:url value="/foci/" htmlEscape="true" />" class="sidenav-link"><i class="sidenav-icon ion ion-md-cloud-outline"></i>
+            <div><spring:message code="foci" /></div>
+          </a>
         </li>
         <li class="sidenav-item">
           <a href="<spring:url value="/logout" htmlEscape="true" />" class="sidenav-link"><i class="sidenav-icon ion ion-ios-log-out"></i>

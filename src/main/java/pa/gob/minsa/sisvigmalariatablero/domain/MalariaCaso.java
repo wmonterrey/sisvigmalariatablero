@@ -121,7 +121,7 @@ public class MalariaCaso implements Serializable, Auditable{
 	}
 
 
-	@Column(name="estado", nullable = true, columnDefinition="enum('sospechoso','confirmado')")
+	@Column(name="estado", nullable = true, columnDefinition="enum('sospechoso','confirmado','descartado')")
 	public String getEstado() {
 		return estado;
 	}

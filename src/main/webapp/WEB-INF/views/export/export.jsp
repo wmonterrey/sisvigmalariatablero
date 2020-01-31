@@ -109,22 +109,43 @@
                 				  <table id="resultados"class="datatables-demo table table-striped table-bordered">
 					                <thead>
 					                	<tr>
+					                		<th>Id Caso</th>
+					                		<th>Id Not</th>
+					                		<th>Fecha Nac</th>
+					                		<th>Sexo</th>
 					                		<th>Estado</th>
-					                		<th>Fiebre</th>
-					                		<th>Sintomas</th>
+					                		<th>Fecha Not</th>
+					                		<th>Unidad Not</th>
 					                		<th>FIS</th>
-					                		<th>Embarazada</th>
-					                		<th>Lactando</th>
+					                		<th>Fecha Muestra</th>
+					                		<th>Semana</th>
+					                		<th>Año</th>
+					                		<th>Tipo busq</th>
 					                		<th>PDR</th>
-					                		<th>Fecha PDR</th>
-					                		<th>Res PDR</th>
-					                		<th>Esp PDR</th>
-					                		<th>Viaje</th>
-					                		<th>Res GG</th>
+					                		<th>PDR Res</th>
+					                		<th>PDR Esp</th>
 					                		<th>Fecha GG</th>
+					                		<th>Res GG</th>
 					                		<th>Esp GG</th>
-					                		<th>Tratamiento</th>
-					                		<th>Clasificacion</th>
+					                		<th>Región Mx</th>
+					                		<th>Distrito Mx</th>
+					                		<th>Corregimiento Mx</th>
+					                		<th>Localidad Mx</th>
+					                		<th>Pais res</th>
+					                		<th>Región res</th>
+					                		<th>Distrito res</th>
+					                		<th>Corregimiento res</th>
+					                		<th>Localidad res</th>
+					                		<th>Funcionario</th>
+					                		<th>Clave</th>
+					                		<th>Investigado</th>
+					                		<th>Clasificado</th>
+					                		<th>Tipo Caso</th>
+					                		<th>Origen Inf</th>
+					                		<th>Tx iniciado</th>
+					                		<th>fecha inicio tx</th>
+					                		<th>tx completo</th>
+					                		<th>causa susp</th>
 					                	</tr>
 					                </thead>
 					                <tbody>

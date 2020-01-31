@@ -18,6 +18,7 @@ return {
   });
   
  $('#divouname').hide();
+ 
   
   $('#oulevel').change(
 		  function() {
@@ -242,12 +243,13 @@ return {
 	      }
 	    });
 	  $.getJSON(parametros.casosUrl, $('#filters-form').serialize(), function(data) {
+
 		  var table1 = $('#resultados').DataTable({
 			  dom: 'lBfrtip',
 	          "oLanguage": {
 	              "sUrl": parametros.dataTablesLang
 	          },
-	          "bFilter": false, 
+	          "bFilter": true, 
 	          "bInfo": true, 
 	          "bPaginate": true, 
 	          "bDestroy": true,
@@ -266,26 +268,27 @@ return {
 	              }
 	          ]
 	      });
+		  
 		  table1.clear().draw();
 		  
-		  var region = "";
 		  
-		  if($('#oulevel').val()=="ALL"){
-			  region = $('#oulevel').select2('data')[0].text
-			  $('#labelTableTitle').html(parametros.casos);
-		  }
-		  else{
-			  region = $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text;
-			  $('#labelTableTitle').html(parametros.canal + ', ' + $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
+		  if(!($('#oulevel').val()=="ALL")){
+			  $('#labelTableTitle').html($('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
 		  }
 		  
 		  for (var row in data) {
 			  
-			  table1.row.add([data[row][0],data[row][1],data[row][2],data[row][3]
-			  				,data[row][4],data[row][5],data[row][6],data[row][7],data[row][8]
-			  					,data[row][9],data[row][10],data[row][11],data[row][12],data[row][13]
-			  						,data[row][14],data[row][15]]);
+			  table1.row.add([data[row].id,data[row].idNotic,data[row].fechaNacimiento,data[row].sexo,data[row].estado
+				  ,data[row].fechaNotificacion,data[row].unidadNotificadora,data[row].fis,data[row].fechaMuestra
+				  ,data[row].semana,data[row].anio,data[row].tipoBusqueda,data[row].pdr,data[row].pdrResultado
+				  ,data[row].pdrParasito,data[row].ggFecha,data[row].ggRes,data[row].ggEsp
+				  ,data[row].regionMuestra,data[row].distritoMuestra,data[row].corregimientoMuestra,data[row].localidadMuestra
+				  ,data[row].paisResidencia,data[row].regionResidencia,data[row].distritoResidencia,data[row].corregimientoResidencia,data[row].localidadResidencia
+				  ,data[row].funcionario,data[row].clave
+				  ,data[row].inv,data[row].clas,data[row].tipoCaso,data[row].origenInf
+				  ,data[row].tx,data[row].ftx,data[row].txcomp,data[row].causaincomp]);
 		  }
+		  
 		  $('#export-element').unblock();
 	  })
 	  .fail(function() {

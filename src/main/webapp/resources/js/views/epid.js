@@ -188,6 +188,7 @@ return {
 	  }else{
 	  canales ();
 	  carga ();
+	  mapa();
 	  }
 	});
 
@@ -197,6 +198,7 @@ return {
   var chart2 = new Chart(document.getElementById('carga-cases-chart').getContext("2d"), {});
   var chart3 = new Chart(document.getElementById('carga-plasmodium-chart').getContext("2d"), {});
   carga ();
+  mapa();
 
 	  
   //Grafico de canales
@@ -587,6 +589,152 @@ return {
 	  });
   }
   
+  //Mapa
+  function mapa (){
+	  document.getElementById('mapCard').innerHTML = "<div id='mapid' style='width: 100%; height: 600px;'></div>";
+	  function getData( callback ){
+		 	$.getJSON(parametros.provinciasUrl, $('#filters-form').serialize(),function(data) {
+		 		callback(data);
+		  	})
+		  	.fail(function() {
+				  alert( data );
+		  	});
+		}
+		
+		
+		getData( function ( datos ) { 
+  		for (var row in datos) {
+   			ponerValor(datos[row][0],datos[row][1]);
+  		}
+  		for (var i=0; i<provinciasData.features.length;i++){
+	 			if(provinciasData.features[i].properties.cases==null){
+					provinciasData.features[i].properties.cases=0;
+	 			}
+			}
+  		var mymap = L.map('mapid').setView([8.398598, -80.108896], 8);
+  	 	var theMarker = {};
+  	  	var locMarkers = new L.FeatureGroup();
+  	  	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+  			maxZoom: 18,
+  			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+  				'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+  				'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+  			id: 'mapbox.streets'
+  		}).addTo(mymap);
+  	  	
+  	  	
+  	  	
+  	 	// control that shows info on hover
+  		var info = L.control();
+
+  		info.onAdd = function (mymap) {
+  			this._div = L.DomUtil.create('div', 'info');
+  			this.update();
+  			return this._div;
+  		};
+
+  		info.update = function (props) {
+  			this._div.innerHTML = '<h4>'+parametros.casos+ ' ' + $('#anio').val()+'</h4>' +  (props ?
+  				'<b>' + props.name + '</b><br />' + props.cases 
+  				: '');
+  		};
+  		
+  		info.addTo(mymap);
+  		
+  		var geojson;
+  		
+  		geojson = L.choropleth(provinciasData, {
+  			valueProperty: 'cases',
+  	        scale: ['#0571b0', '#92c5de', '#f4a582', '#ca0020'],
+  	        steps: 4,
+  	        mode: 'q',
+  	        style: {
+  	          color: '#fff',
+  	          weight: 2,
+  	          fillOpacity: 0.7
+  	        },
+  			onEachFeature: onEachFeature
+  		}).addTo(mymap);
+  		
+  		var legend = L.control({position: 'bottomright'});
+
+  		legend.onAdd = function (mymap) {
+
+  			var div = L.DomUtil.create('div', 'info legend');
+  			var limits = geojson.options.limits;
+  			var colors = geojson.options.colors;
+  		    var labels = [];
+  			
+  		    limits.forEach(function (limit, index) {
+  		        if (index === 0) {
+  		            var to = parseFloat(limits[index]).toFixed(0);
+  		            var range_str = "<= " + to;
+  		        }
+  		        else {
+  		            var from = parseFloat(limits[index - 1]).toFixed(0);
+  		            var to = parseFloat(limits[index]).toFixed(0);
+  		            var range_str = "> "+from + "-" + to;
+  		        }
+
+  		        
+  		        labels.push(
+  						'<i style="background:' + colors[index] + '"></i> ' +
+  						range_str);
+  		    })
+	
+	    		div.innerHTML = labels.join('<br>');
+  			return div;
+  		};
+
+  		legend.addTo(mymap);
+  		
+  		function ponerValor(prov,valor) {
+  	 		for (var i=0; i<provinciasData.features.length;i++){
+  	 			if(provinciasData.features[i].properties.id==prov){
+  					provinciasData.features[i].properties.cases=valor;
+  	 			}
+  			}
+  		}
+
+  		
+  		
+  		function highlightFeature(e) {
+  			var layer = e.target;
+
+  			layer.setStyle({
+  				weight: 5,
+  				color: '#666',
+  				dashArray: '',
+  				fillOpacity: 0.7
+  			});
+
+  			if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+  				layer.bringToFront();
+  			}
+
+  			info.update(layer.feature.properties);
+  		}
+  	  	
+
+  		function resetHighlight(e) {
+  			geojson.resetStyle(e.target);
+  			info.update();
+  		}
+
+  		function zoomToFeature(e) {
+  			mymap.fitBounds(e.target.getBounds());
+  		}
+  		
+  		function onEachFeature(feature, layer) {
+  			layer.on({
+  				mouseover: highlightFeature,
+  				mouseout: resetHighlight,
+  				click: zoomToFeature
+  			});
+  		}
+  	});
+  }
+  
   $("#anterior").click(function(e) {	  
 	   var actual = parseInt($('#anio').val());
 	   actual = actual -1;
@@ -610,6 +758,7 @@ return {
  function resizeCharts() {
    chart1.resize();
    chart2.resize();
+   chart3.resize();
  }
 
  // For performance reasons resize charts on delayed resize event

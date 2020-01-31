@@ -229,9 +229,7 @@
 			if ($('html').attr('dir') === 'rtl') {
 				$('#navbar-filtros .dropdown-menu').addClass('dropdown-menu-right');
 			}
-			$('.navbar-filtros-mega-dropdown').each(function() {
-				new MegaDropdown(this);
-			});
+
 	    	$("li.tableros").addClass("open");
 	    	$("li.tableros").addClass("active");
 	    	$("li.vig").addClass("active");

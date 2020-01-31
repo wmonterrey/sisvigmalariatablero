@@ -76,27 +76,5 @@ public class DashboardPortadaDatosController {
         return datos;
     }
     
-    @RequestMapping(value = "/provinciasmapa/", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody List<Object[]> obtenerCasosxProvincia(/*@RequestParam(value = "anio", required = true) Integer anio,
-    		@RequestParam(value = "oulevel", required = true) String oulevel,
-    		@RequestParam(value = "ouname", required = false, defaultValue="") String ouname*/
-    		) throws ParseException {
-        logger.info("Obteniendo casos confirmados por provincia");
-        
-        List<Object[]> datos = dashboardPortadaService.getDatosCasosxProv(2019,"ALL","");
-        return datos;
-    }
-    
-    @RequestMapping(value = "/regionesmapa/", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody List<Object[]> obtenerCasosxRegion(/*@RequestParam(value = "anio", required = true) Integer anio,
-    		@RequestParam(value = "oulevel", required = true) String oulevel,
-    		@RequestParam(value = "ouname", required = false, defaultValue="") String ouname*/
-    		) throws ParseException {
-        logger.info("Obteniendo casos confirmados por region");
-        
-        List<Object[]> datos = dashboardPortadaService.getDatosCasosxRegion(2019,"ALL","");
-        return datos;
-    }
-    
     
 }

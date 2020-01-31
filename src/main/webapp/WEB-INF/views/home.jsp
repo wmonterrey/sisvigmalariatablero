@@ -406,7 +406,11 @@
 	    	$("li.tableros").addClass("open");
 	    	$("li.tableros").addClass("active");
 	    	$("li.portada").addClass("active");
+			
 	    });
+		function cargarAyuda(){ 
+			window.open("https://www.w3schools.com");
+		}
 	</script>
 </body>
 </html>

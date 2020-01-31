@@ -500,10 +500,12 @@ return {
 			      responsive: true,
 			      maintainAspectRatio: false,
 					plugins: {
-			          labels: {
-			            render: 'value'
-			          }
-			        }
+				          labels: {
+				            render: 'percentage',
+				            fontColor: ['white','white','white'],
+				            precision: 2
+				          }
+				        }
 			    }
 			  });
 			  chart3.resize();

@@ -143,6 +143,20 @@
   	<!-- Bootstrap and necessary plugins -->
   	<jsp:include page="../../fragments/corePlugins.jsp" />
   	<jsp:include page="../../fragments/bodyUtils.jsp" />
+  	
+  	<!-- Lenguaje -->
+	<c:choose>
+	<c:when test="${cookie.esisvigLang.value == null}">
+		<c:set var="lenguaje" value="es"/>
+	</c:when>
+	<c:otherwise>
+		<c:set var="lenguaje" value="${cookie.esisvigLang.value}"/>
+	</c:otherwise>
+	</c:choose>
+  	
+  	<spring:url value="/resources/vendor/libs/datatables/label_{language}.json" var="dataTablesLang">
+  		<spring:param name="language" value="${lenguaje}" />
+  	</spring:url>
 
 
 	<script>
@@ -150,6 +164,31 @@
 	    	$("li.usuarios").addClass("open");
 	    	$("li.usuarios").addClass("active");
 	    	$("li.uadmin").addClass("active");
+	    	
+	    	$('#lista_usuarios').DataTable({
+				  dom: 'lBfrtip',
+		          "oLanguage": {
+		              "sUrl": "${dataTablesLang}"
+		          },
+		          "bFilter": true, 
+		          "bInfo": true, 
+		          "bPaginate": true, 
+		          "bDestroy": true,
+		          "responsive": true,
+		          "pageLength": 10,
+		          "bLengthChange": true,
+		          "responsive": true,
+		          "buttons": [
+		              {
+		                  extend: 'excel'
+		              },
+		              {
+		                  extend: 'pdfHtml5',
+		                  orientation: 'portrait',
+		                  pageSize: 'LETTER'
+		              }
+		          ]
+		      });
 	    });
 	</script>
 </body>

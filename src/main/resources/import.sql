@@ -184,3 +184,14 @@ INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden
 
 INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('export', NULL, NULL, 'Export', '0', 0, '0', 'Exportar');
 INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('notifs', NULL, NULL, 'Notifications', '0', 0, '0', 'Notificaciones');
+
+
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('maps', NULL, NULL, 'Maps', '0', 0, '0', 'Mapas');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('casesxreg', NULL, NULL, 'Cases by region', '0', 0, '0', 'Casos por región');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('casesxdist', NULL, NULL, 'Cases by district', '0', 0, '0', 'Casos por distrito');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('casesxcorr', NULL, NULL, 'Cases by coreg', '0', 0, '0', 'Casos por corregimiento');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('casesxloc', NULL, NULL, 'Cases by localities', '0', 0, '0', 'Casos por localidades');
+
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('foci', NULL, NULL, 'Foci', '0', 0, '0', 'Focos');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('code', NULL, NULL, 'Code', '0', 0, '0', 'Código');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('name', NULL, NULL, 'Name', '0', 0, '0', 'Descripción');

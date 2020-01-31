@@ -8,9 +8,53 @@
   <jsp:include page="../fragments/headTag.jsp" />
   <spring:url value="/resources/vendor/libs/leaflet/leaflet.css" var="leafletCSS" />
   <link href="${leafletCSS}" rel="stylesheet" type="text/css"/>
-  <style>#map { width: 800px; height: 500px; }
-	.info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
-	.legend { text-align: left; line-height: 48px; color: #555; } .legend i { width: 20px; height: 20px; float: left; margin-right: 8px; opacity: 0.7; }</style>
+  <style>
+  	.legend, .temporal-legend {
+	padding: 6px 10px;
+	font: 12px/14px Arial, Helvetica, sans-serif;
+	background: white;
+	background: rgba(255,255,255,0.8);
+	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+	border-radius: 5px;
+	}
+	#legendTitle {
+	 	text-align: center;
+	 	margin-bottom: 15px;
+		font-variant: small-caps;
+	}
+	.symbolsContainer {
+		float: left;
+		margin-left: 60px;
+	}
+	.legendCircle1 {
+		border-radius:50%; 
+		border: 1px solid #537898; 
+	 	background: rgba(113, 133, 152, .6);
+		display: inline-block;
+	}
+	.legendCircle2 {
+		border-radius:50%; 
+		border: 1px solid #537898; 
+	 	background: rgba(5, 113, 176, .6);
+		display: inline-block;
+	}
+	.legendCircle3 {
+		border-radius:50%; 
+		border: 1px solid #537898; 
+	 	background: rgba(146, 197, 222, .6);
+		display: inline-block;
+	}
+	.legendCircle4 {
+		border-radius:50%; 
+		border: 1px solid #537898; 
+	 	background: rgba(244, 165, 130, .6);
+		display: inline-block;
+	}
+	.legendValue {
+		position: absolute;
+		right: 8px;
+	}
+   </style>
 </head>
 <body>
 	<div class="page-loader">
@@ -39,6 +83,9 @@
 			              <div class="text-muted text-tiny mt-1"><small class="font-weight-normal"><fmt:formatDate value="${now}" dateStyle="long"/></small></div>
 			            </h4>
 			            
+			            
+			            
+			            
 			            <div class="card mb-4" id="map-element">
 			              <h6 class="card-header with-elements">
 			                <div class="card-header-title"><label id="labelMapTitle"></label></div>
@@ -48,6 +95,40 @@
 			                  <div id="mapCard" class="card-body">
 			                    <div id="mapid" style="width: 100%; height: 600px;"></div>
 			                  </div>
+			                </div>
+			
+			              </div>
+			            </div>
+			            
+			            <!-- Filtros -->
+			            <div class="row">
+			              <div class="col-sm-12 col-md-12 col-xl-12">
+			                <div class="card mb-4">
+			                  <div class="card mb-4">
+									<div class="card-body">
+										<form id="filters-form">
+											
+											<div class="form-row">
+												<div class="form-group col-md-12">
+													<div class="form-row">
+														<div class="form-group col-md-1.5">
+															<label id="labelFechaInicio" class="form-label"></label>
+															<input type="hidden" id="fechaInicio" name="fechaInicio" class="form-control"></input>
+														</div>
+														<div class="form-group col-md-10">
+															<div id="slider-date"></div>
+														</div>
+														<div class="form-group col-md-1.5">
+															<label id="labelFechaFin" class="form-label col-sm-12 text-right"></label>
+															<input type="hidden" id="fechaFin" name="fechaFin" class="form-control"></input>
+														</div>
+													</div>
+												</div>
+											</div>
+											
+										</form>
+									</div>
+								</div>
 			                </div>
 			
 			              </div>
@@ -71,13 +152,25 @@
   	<spring:url value="/resources/vendor/libs/leaflet/leaflet.js" var="leafletJS" />
     <script src="${leafletJS}" type="text/javascript"></script>
     
-    <spring:url value="/resources/vendor/libs/leaflet/choropleth.js" var="leafletCloJS" />
-    <script src="${leafletCloJS}" type="text/javascript"></script>
+   
+    <spring:url value="/resources/maps/regionescentros.geojson" var="RegionesPanama" />
+    <script src="${RegionesPanama}" type="text/javascript"></script>
     
-    <spring:url value="/resources/maps/provincias.geojson" var="ProvinciasPanama" />
-    <script src="${ProvinciasPanama}" type="text/javascript"></script>
+    <spring:url value="/resources/maps/distritoscentros.geojson" var="DistritosPanama" />
+    <script src="${DistritosPanama}" type="text/javascript"></script>
     
-    <spring:url value="/view/portada/provinciasmapa/" var="provinciasUrl"/>
+    <spring:url value="/resources/maps/corregimientoscentros.geojson" var="CorregimientosPanama" />
+    <script src="${CorregimientosPanama}" type="text/javascript"></script>
+    
+    
+    <spring:url value="/resources/maps/localidadescentros.geojson" var="LocalidadesPanama" />
+    <script src="${LocalidadesPanama}" type="text/javascript"></script>
+    
+    <!-- Custom scripts required by this view -->
+  	<spring:url value="/resources/js/views/mapa.js" var="ProcessMapa" />
+  	<script src="${ProcessMapa}"></script>
+    
+    <spring:url value="/map/datosmapa/" var="datosUrl"/>
     
   	
   	<!-- Lenguaje -->
@@ -90,155 +183,23 @@
 	</c:otherwise>
 	</c:choose>
 	
-	<script type="text/javascript">
+	<c:set var="creg"><spring:message code="casesxreg" /></c:set>
+	<c:set var="cdis"><spring:message code="casesxdist" /></c:set>
+	<c:set var="ccor"><spring:message code="casesxcorr" /></c:set>
+	<c:set var="cloc"><spring:message code="casesxloc" /></c:set>
+	<c:set var="cases"><spring:message code="confirmed" /></c:set>
 	
-		function getData( callback ){
-		 	$.getJSON("${provinciasUrl}","",function(data) {
-		 		callback(data);
-		  	})
-		  	.fail(function() {
-				  alert( data );
-		  	});
-		}
-		
-		
-		getData( function ( datos ) { 
-    		for (var row in datos) {
-     			ponerValor(datos[row][0],datos[row][1]);
-    		}
-    		for (var i=0; i<provinciasData.features.length;i++){
-	 			if(provinciasData.features[i].properties.cases==null){
-					provinciasData.features[i].properties.cases=0;
-	 			}
+	<script>
+		jQuery(document).ready(function() {
+			var parametros = {datosUrl: "${datosUrl}",creg: "${creg}",cdis: "${cdis}",ccor: "${ccor}",cloc: "${cloc}",cases: "${cases}"};
+			ProcessMap.init(parametros);
+			
+			if ($('html').attr('dir') === 'rtl') {
+				$('#navbar-filtros .dropdown-menu').addClass('dropdown-menu-right');
 			}
-    		var mymap = L.map('mapid').setView([8.398598, -80.108896], 8);
-    	 	var theMarker = {};
-    	  	var locMarkers = new L.FeatureGroup();
-    	  	L.tileLayer('http://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-    			maxZoom: 18,
-    			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-    				'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-    				'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    			id: 'mapbox.streets'
-    		}).addTo(mymap);
-    	  	
-    	  	
-    	  	
-    	 	// control that shows info on hover
-    		var info = L.control();
 
-    		info.onAdd = function (mymap) {
-    			this._div = L.DomUtil.create('div', 'info');
-    			this.update();
-    			return this._div;
-    		};
-
-    		info.update = function (props) {
-    			this._div.innerHTML = '<h4>Casos confirmados</h4>' +  (props ?
-    				'<b>' + props.name + '</b><br />' + props.cases 
-    				: '');
-    		};
-    		
-    		info.addTo(mymap);
-    		
-    		var geojson;
-    		
-    		geojson = L.choropleth(provinciasData, {
-    			valueProperty: 'cases',
-    	        scale: ['blue', 'red'],
-    	        steps: 4,
-    	        mode: 'q',
-    	        style: {
-    	          color: '#fff',
-    	          weight: 2,
-    	          fillOpacity: 0.7
-    	        },
-    			onEachFeature: onEachFeature
-    		}).addTo(mymap);
-    		
-    		var legend = L.control({position: 'bottomright'});
-
-    		legend.onAdd = function (mymap) {
-
-    			var div = L.DomUtil.create('div', 'info legend');
-    			var limits = geojson.options.limits;
-    			var colors = geojson.options.colors;
-    		    var labels = [];
-    			
-    		    limits.forEach(function (limit, index) {
-    		        if (index === 0) {
-    		            var to = parseFloat(limits[index]).toFixed(0);
-    		            var range_str = "<= " + to;
-    		        }
-    		        else {
-    		            var from = parseFloat(limits[index - 1]).toFixed(0);
-    		            var to = parseFloat(limits[index]).toFixed(0);
-    		            var range_str = "> "+from + "-" + to;
-    		        }
-
-    		        
-    		        labels.push(
-    						'<i style="background:' + colors[index] + '"></i> ' +
-    						range_str);
-    		    })
-	
-	    		div.innerHTML = labels.join('<br>');
-    			return div;
-    		};
-
-    		legend.addTo(mymap);
-    		
-    		function ponerValor(prov,valor) {
-    	 		for (var i=0; i<provinciasData.features.length;i++){
-    	 			if(provinciasData.features[i].properties.id==prov){
-    					provinciasData.features[i].properties.cases=valor;
-    	 			}
-    			}
-    		}
-
-    		
-    		
-    		function highlightFeature(e) {
-    			var layer = e.target;
-
-    			layer.setStyle({
-    				weight: 5,
-    				color: '#666',
-    				dashArray: '',
-    				fillOpacity: 0.7
-    			});
-
-    			if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-    				layer.bringToFront();
-    			}
-
-    			info.update(layer.feature.properties);
-    		}
-    	  	
-
-    		function resetHighlight(e) {
-    			geojson.resetStyle(e.target);
-    			info.update();
-    		}
-
-    		function zoomToFeature(e) {
-    			mymap.fitBounds(e.target.getBounds());
-    		}
-    		
-    		function onEachFeature(feature, layer) {
-    			layer.on({
-    				mouseover: highlightFeature,
-    				mouseout: resetHighlight,
-    				click: zoomToFeature
-    			});
-    		}
-    	});
-		
-	 	
-	 	
-		
-		$("li.maps").addClass("active");
-	  	
+	    	$("li.map").addClass("active");
+	    });
 	</script>
 </body>
 </html>

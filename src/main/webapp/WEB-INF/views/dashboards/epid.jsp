@@ -5,6 +5,11 @@
 <html class="default-style">
 <head>
   <jsp:include page="../fragments/headTag.jsp" />
+  <spring:url value="/resources/vendor/libs/leaflet/leaflet.css" var="leafletCSS" />
+  <link href="${leafletCSS}" rel="stylesheet" type="text/css"/>
+  <style>#map { width: 800px; height: 500px; }
+	.info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
+	.legend { text-align: left; line-height: 48px; color: #555; } .legend i { width: 20px; height: 20px; float: left; margin-right: 8px; opacity: 0.7; }</style>
 </head>
 <body>
 	<div class="page-loader">
@@ -262,6 +267,21 @@
   							<div class="swiper-pagination"></div>
 						</div>
 			            <!-- / carga pagination -->
+			            
+			            
+			            <div class="card mb-4" id="map-element">
+			              <h6 class="card-header with-elements">
+			                <div class="card-header-title"><label id="labelMapTitle"></label></div>
+			              </h6>
+			              <div class="row no-gutters row-bordered">
+			                <div class="col-md-12 col-lg-12 col-xl-12">
+			                  <div id="mapCard" class="card-body">
+			                    <div id="mapid" style="width: 100%; height: 600px;"></div>
+			                  </div>
+			                </div>
+			
+			              </div>
+			            </div>
             
          			</div>
          			<!-- / Content -->
@@ -277,6 +297,12 @@
   	<!-- Bootstrap and necessary plugins -->
   	<jsp:include page="../fragments/corePlugins.jsp" />
   	<jsp:include page="../fragments/bodyUtils.jsp" />
+  	
+  	<spring:url value="/resources/vendor/libs/leaflet/leaflet.js" var="leafletJS" />
+    <script src="${leafletJS}" type="text/javascript"></script>
+    
+    <spring:url value="/resources/vendor/libs/leaflet/choropleth.js" var="leafletCloJS" />
+    <script src="${leafletCloJS}" type="text/javascript"></script>
 
  	<spring:url value="/resources/js/views/epid.js" var="Epid" />
   	<script src="${Epid}" type="text/javascript"></script>
@@ -303,6 +329,10 @@
   	<!-- Urls -->
   	<spring:url value="/view/epid/canal/" var="canalUrl"/>
   	<spring:url value="/view/epid/carga/" var="cargaUrl"/>
+  	<spring:url value="/resources/maps/provincias.geojson" var="ProvinciasPanama" />
+    <script src="${ProvinciasPanama}" type="text/javascript"></script>
+    
+    <spring:url value="/view/epid/provinciasmapa/" var="provinciasUrl"/>
   	
   	<spring:url value="/api/regiones" var="opcRegUrl"/>
   	<spring:url value="/api/provincias" var="opcProvUrl"/>
@@ -331,15 +361,13 @@
 					seleccionar: "${seleccionar}",opcRegUrl: "${opcRegUrl}",localidadesUrl: "${localidadesUrl}"
 						, ourequerida: "${ourequerida}",opcProvUrl: "${opcProvUrl}",opcDistUrl: "${opcDistUrl}",opcCorregUrl: "${opcCorregUrl}"
 							,total: "${total}",canal: "${canal}",dataTablesLang: "${dataTablesLang}",casos: "${casos}"
-								,tipobusq: "${tipobusq}",active: "${active}",pasive: "${pasive}",sdtb: "${sdtb}",reactive: "${reactive}",survey: "${survey}"};
+								,tipobusq: "${tipobusq}",active: "${active}",pasive: "${pasive}",sdtb: "${sdtb}",reactive: "${reactive}",survey: "${survey}",provinciasUrl: "${provinciasUrl}"};
 			ProcessDashboardEpid.init(parametros);
 			
 			if ($('html').attr('dir') === 'rtl') {
 				$('#navbar-filtros .dropdown-menu').addClass('dropdown-menu-right');
 			}
-			$('.navbar-filtros-mega-dropdown').each(function() {
-				new MegaDropdown(this);
-			});
+			
 	    	$("li.tableros").addClass("open");
 	    	$("li.tableros").addClass("active");
 	    	$("li.epid").addClass("active");

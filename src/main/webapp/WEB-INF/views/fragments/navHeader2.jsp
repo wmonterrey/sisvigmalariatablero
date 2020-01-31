@@ -14,7 +14,7 @@
 <div class="nav-item d-none d-lg-block text-big font-weight-light line-height-1 opacity-25 mr-3 ml-1">|</div>
       
 <div class="demo-navbar-messages nav-item mr-lg-3">
-	<a class="nav-link dropdown-toggle hide-arrow" href="#">
+	<a class="nav-link dropdown-toggle hide-arrow" href="javascript:cargarAyuda()">
 		<i class="ion ion-md-help navbar-icon align-middle"></i>
 		<span class="d-lg-none align-middle">&nbsp; <spring:message code="help" /></span>
 	</a>

@@ -1,670 +1,342 @@
-var ProcessMapa = function () {
+var ProcessMap = function () {
+	
 	
 return {
   //main function to initiate the module
   init: function (parametros) {
 	  
-  var clickChart = false;	 
-  var label = "";
-
-  // Select2
-  $(function() {
-    $('.select2-filtro').each(function() {
-      $(this)
-        .wrap('<div class="position-relative"></div>')
-        .select2({
-          placeholder: parametros.seleccionar,
-          dropdownParent: $(this).parent(),
-          language:parametros.lenguaje
-        });
-    })
-  });
-  
-  $('#divouname').hide();
-  
-  $('#oulevel').change(
-		  function() {
-			$('#divouname').hide();  
-			$('#ouname').html('');
-  			if ($('#oulevel option:selected').val() == "ALL"){
-  				$('#divouname').hide();
-  			}
-  			else if ($('#oulevel option:selected').val() == "province.samp"){
-  				$("#ouname").wrap('<div class="position-relative"></div>')
-  		        .select2({
-  		          placeholder: parametros.seleccionar,
-  		          dropdownParent: $(this).parent(),
-  		          language:parametros.lenguaje
-  		        });
-  				$('#divouname').show();
-  				$.getJSON(parametros.opcProvUrl, {
-    				ajax : 'true'
-    			}, function(data) {
-    				var html;
-    				var len = data.length;
-    				for ( var i = 0; i < len; i++) {
-    					html += '<option value="' + data[i].ident + '">'+ data[i].name +'</option>';
-    				}
-    				$('#ouname').html(html);
-    			});
-  			}
-  			else if ($('#oulevel option:selected').val() == "region.samp"){
-  				$("#ouname").wrap('<div class="position-relative"></div>')
-  		        .select2({
-  		          placeholder: parametros.seleccionar,
-  		          dropdownParent: $(this).parent(),
-  		          language:parametros.lenguaje
-  		        });
-  				$('#divouname').show();
-  				$.getJSON(parametros.opcRegUrl, {
-    				ajax : 'true'
-    			}, function(data) {
-    				var html;
-    				var len = data.length;
-    				for ( var i = 0; i < len; i++) {
-    					html += '<option value="' + data[i].ident + '">'+ data[i].name +'</option>';
-    				}
-    				$('#ouname').html(html);
-    				if(clickChart){
-    					$('#ouname').val($("#ouname option:contains('"+label+"')").val()).change();
-    					$("#actualizar").click();
-    					clickChart = false;
-    				}
-    			});
-  			}
-  			else if ($('#oulevel option:selected').val() == "district.samp"){
-  				$("#ouname").wrap('<div class="position-relative"></div>')
-  		        .select2({
-  		          placeholder: parametros.seleccionar,
-  		          dropdownParent: $(this).parent(),
-  		          language:parametros.lenguaje
-  		        });
-  				$('#divouname').show();
-  				$.getJSON(parametros.opcDistUrl, {
-    				ajax : 'true'
-    			}, function(data) {
-    				var html;
-    				var len = data.length;
-    				for ( var i = 0; i < len; i++) {
-    					html += '<option value="' + data[i].ident + '">'+ data[i].name + ' - ' + data[i].region.name +'</option>';
-    				}
-    				$('#ouname').html(html);
-    				if(clickChart){
-    					$('#ouname').val($("#ouname option:contains('"+label+"')").val()).change();
-    					$("#actualizar").click();
-    					clickChart = false;
-    				}
-    			});
-  			}
-  			else if ($('#oulevel option:selected').val() == "correg.samp"){
-  				$("#ouname").wrap('<div class="position-relative"></div>')
-  		        .select2({
-  		          placeholder: parametros.seleccionar,
-  		          dropdownParent: $(this).parent(),
-  		          language:parametros.lenguaje
-  		        });
-  				$('#divouname').show();
-  				$.getJSON(parametros.opcCorregUrl, {
-    				ajax : 'true'
-    			}, function(data) {
-    				var html;
-    				var len = data.length;
-    				for ( var i = 0; i < len; i++) {
-    					html += '<option value="' + data[i].ident + '">'+ data[i].name + ' - ' + data[i].distrito.region.name +'</option>';
-    				}
-    				$('#ouname').html(html);
-    				if(clickChart){
-    					$('#ouname').val($("#ouname option:contains('"+label+"')").val()).change();
-    					$("#actualizar").click();
-    					clickChart = false;
-    				}
-    			});
-  			}
-  			else if($('#oulevel option:selected').val() == "local.samp"){
-  				$('#divouname').show();
-  				$("#ouname").wrap('<div class="position-relative"></div>').select2({
-  					placeholder: parametros.seleccionar,
-  					dropdownParent: $(this).parent(),
-  					language:parametros.lenguaje,
-  					  ajax: {
-  					    url: parametros.localidadesUrl,
-  					    dataType: 'json',
-  					    delay: 250,
-  					    data: function (params) {
-  					      return {
-  					        filtro: params.term
-  					      };
-  					    },
-  					    processResults: function (data, params) {
-  					      return {
-  					        results: data.items,
-  					        pagination: {
-  					          more: (params.page * 30) < data.total
-  					        }
-  					      };
-  					    },
-  					    cache: true
-  					  },
-  					  escapeMarkup: function (markup) { return markup; }, 
-  					  minimumInputLength: 3,
-  					  templateResult: formatLocalidad,
-  					  templateSelection: formatLocalidadSelection
-  					});
-
-  					function formatLocalidad (localidad) {
-  						if (localidad.loading) {
-  						    return localidad.text;
-  						}
-  					  	
-  						var markup = "<div class='clearfix'>" +
-  					    	"<div>Localidad     : " + localidad.text + "</div>" +
-  					    	"<div>Corregimiento : " + localidad.localidad.corregimiento.name + "</div>" +
-  					    	"<div>Distrito      : " + localidad.localidad.corregimiento.distrito.name + "</div>"+
-  					    	"<div>Región        : " + localidad.localidad.corregimiento.distrito.region.name + "</div>"+
-  					    	"<div>Provincia     : " + localidad.localidad.corregimiento.distrito.provincia.name + "</div>";
-  					  	
-  					    return markup;
-  					}
-
-  					function formatLocalidadSelection (localidad) {
-  						if (localidad.localidad) {
-  							return localidad.localidad.name + " Corregimiento: " +localidad.localidad.corregimiento.name + " Región: " +localidad.localidad.corregimiento.distrito.region.name;
-  						}
-  						return localidad.text;
-  					}
-  			}
-          });
-  
-  
-  //Swiper
-  
-  var swiperWithPagination1 = new Swiper('#swiper-with-pagination-cases', {
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true
-    },
-    navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev'
-      }
-  });
-  
-  var swiperWithPagination2 = new Swiper('#swiper-with-pagination-samples', {
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true
-    },
-    navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev'
-      }
-  });
-  
-  var swiperWithPagination3 = new Swiper('#swiper-with-pagination-regions', {
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true
-    },
-    navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev'
-      }
-  });
-  
-  $("#actualizar").on("click", function(evt) {
-	  evt.preventDefault();
-	  if($('#oulevel option:selected').val() != "ALL" && $('#ouname').select2('data')[0]===undefined){
-		  alert(parametros.ourequerida);
-	  }else{
-		  casosxSemana ();
-		  muestrasxSemana ();
-		  casosxRegion();
-		  locBusq();  
+	  //Create a new date from a string, return as a timestamp.
+	  function timestamp(str) {
+	      return new Date(str).getTime();
 	  }
-	});
-
-  
-  var chart1 = new Chart(document.getElementById('confirmed-cases-chart').getContext("2d"), {});
-  casosxSemana();
-  var chart2 = new Chart(document.getElementById('samples-chart').getContext("2d"), {});
-  muestrasxSemana();
-  var chart3 = new Chart(document.getElementById('regions-chart').getContext("2d"), {});
-  casosxRegion();
-  locBusq();
 	  
-  //Grafico de casos confirmados por semana
-  function casosxSemana (){
-	  $('#confirmed-element').block({
-	      message: '<div class="sk-wave sk-primary"><div class="sk-rect sk-rect1"></div> <div class="sk-rect sk-rect2"></div> <div class="sk-rect sk-rect3"></div> <div class="sk-rect sk-rect4"></div> <div class="sk-rect sk-rect5"></div></div>',
-	      css: {
-	        backgroundColor: 'transparent',
-	        border: '0'
-	      },
-	      overlayCSS:  {
-	        backgroundColor: '#fff',
-	        opacity: 0.8
-	      }
-	    });
-	  $.getJSON(parametros.casosUrl, $('#filters-form').serialize(), function(data) {
-		  var table1 = $('#casestable').DataTable({
-			  dom: 'lBfrtip',
-	          "oLanguage": {
-	              "sUrl": parametros.dataTablesLang
-	          },
-	          "bFilter": false, 
-	          "bInfo": true, 
-	          "bPaginate": true, 
-	          "bDestroy": true,
-	          "responsive": true,
-	          "pageLength": 4,
-	          "bLengthChange": false,
-	          "responsive": true,
-	          "columns": [
-	        	    { "title": $('#timeview').select2('data')[0].text },
-	        	    null,
-	        	    null,
-	        	    null
-	        	  ],
-	          "buttons": [
-	              {
-	                  extend: 'excel'
-	              },
-	              {
-	                  extend: 'pdfHtml5',
-	                  orientation: 'portrait',
-	                  pageSize: 'LETTER'
-	              }
-	          ]
-	      });
-		  table1.clear().draw();
-		  var semanas = [];
-		  var casos = [];
-		  var totalCasos = 0;
-		  var region = "";
-		  
-		  $('#labelConfirmed').html(parametros.casos + ' ' + $('#anio').val());
-		  if($('#oulevel').val()=="ALL"){
-			  region = $('#oulevel').select2('data')[0].text;
-			  $('#labelChart1Title').html(parametros.casos + ' ' + $('#anio').val());
-			  $('#labelTable1Title').html(parametros.casos + ' ' + $('#anio').val());
-		  }
-		  else{
-			  region = $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text;
-			  $('#labelChart1Title').html(parametros.casos + ', ' + $('#anio').val()+ ' ' + $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
-			  $('#labelTable1Title').html(parametros.casos + ', ' + $('#anio').val()+ ' ' + $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
-		  }
-		  
-		  
-		  for (var row in data) {
-			  semanas.push([data[row].periodo]);
-			  casos.push([data[row].dato1]);
-			  totalCasos = totalCasos + data[row].dato1;
-			  table1.row.add([data[row].periodo, $('#anio').val(), data[row].dato1, region]);
-		  }
-		  
-		  $('#confirmed').html(totalCasos);
-		  chart1.destroy();
-		  chart1 = new Chart(document.getElementById('confirmed-cases-chart').getContext("2d"), {
-		    type: 'bar',
-		    data: {
-		      labels: semanas,
-		      datasets: [{
-		        label: parametros.casos,
-		        data: casos,
-		        borderWidth: 1,
-		        backgroundColor: 'rgba(28,180,255,.05)',
-		        borderColor: 'rgba(28,180,255,1)'
-		      }],
-		    },
-		    options: {
-		      scales: {
-		        xAxes: [{
-		          gridLines: {
-		            display: false
-		          },
-		          ticks: {
-		            fontColor: '#aaa'
-		          }
-		        }],
-		        yAxes: [{
-		          gridLines: {
-		            display: false
-		          },
-		          ticks: {
-		            fontColor: '#aaa'
-		          }
-		        }]
-		      },
-		
-		      responsive: false,
-		      maintainAspectRatio: false
-		    }
-		  });
-		  chart1.resize();
-		  $('#confirmed-element').unblock();
-	  })
-	  .fail(function() {
-		  alert( "error" );
-		  $('#confirmed-element').unblock();
-	  });
-  }
-  
-  
-//Grafico de muestras por semana
-  function muestrasxSemana (){
-	  $('#samples-element').block({
-	      message: '<div class="sk-wave sk-primary"><div class="sk-rect sk-rect1"></div> <div class="sk-rect sk-rect2"></div> <div class="sk-rect sk-rect3"></div> <div class="sk-rect sk-rect4"></div> <div class="sk-rect sk-rect5"></div></div>',
-	      css: {
-	        backgroundColor: 'transparent',
-	        border: '0'
-	      },
-	      overlayCSS:  {
-	        backgroundColor: '#fff',
-	        opacity: 0.8
-	      }
-	    });
-	  $.getJSON(parametros.muestrasUrl, $('#filters-form').serialize(), function(data) {
-		  var table2 = $('#samplestable').DataTable({
-			  dom: 'lBfrtip',
-	          "oLanguage": {
-	              "sUrl": parametros.dataTablesLang
-	          },
-	          "bFilter": false, 
-	          "bInfo": true, 
-	          "bPaginate": true, 
-	          "bDestroy": true,
-	          "responsive": true,
-	          "pageLength": 4,
-	          "bLengthChange": false,
-	          "responsive": true,
-	          "columns": [
-	        	    { "title":$('#timeview').select2('data')[0].text},
-	        	    null,
-	        	    null,
-	        	    null
-	        	  ],
-	          "buttons": [
-	              {
-	                  extend: 'excel'
-	              },
-	              {
-	                  extend: 'pdfHtml5',
-	                  orientation: 'portrait',
-	                  pageSize: 'LETTER'
-	              }
-	          ]
-	      });
-		  table2.clear().draw();
-		  var semanas = [];
-		  var casos = [];
-		  var totalCasos = 0;
-		  var region = "";
-		  
-		  if($('#oulevel').val()=="ALL"){
-			  region = $('#oulevel').select2('data')[0].text;
-			  $('#labelChart2Title').html(parametros.muestras + ' ' + $('#anio').val());
-			  $('#labelTable2Title').html(parametros.muestras + ' ' + $('#anio').val());
-		  }
-		  else{
-			  region = $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text;
-			  $('#labelChart2Title').html(parametros.muestras + ', ' + $('#anio').val()+ ' ' + $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
-			  $('#labelTable2Title').html(parametros.muestras + ', ' + $('#anio').val()+ ' ' + $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
-		  }
-		  
-		  for (var row in data) {
-			  semanas.push([data[row].periodo]);
-			  casos.push([data[row].dato1]);
-			  totalCasos = totalCasos + data[row].dato1;
-			  table2.row.add([data[row].periodo, $('#anio').val(), data[row].dato1, region]);
-		  }
-		  
+	  
+	  var dateSlider = document.getElementById('slider-date');
+	  var firstDay = new Date().getFullYear().toString();
+	  var isRtl = $('body').attr('dir') === 'rtl' || $('html').attr('dir') === 'rtl';
 
-		  $('#samples').html(totalCasos);
-		  chart2.destroy();
-		  chart2 = new Chart(document.getElementById('samples-chart').getContext("2d"), {
-		    type: 'bar',
-		    data: {
-		      labels: semanas,
-		      datasets: [{
-		        label: parametros.muestras,
-		        data: casos,
-		        borderWidth: 1,
-		        backgroundColor: 'rgba(28,180,255,.05)',
-		        borderColor: 'rgba(28,180,255,1)'
-		      }],
-		    },
-		    options: {
-		      scales: {
-		        xAxes: [{
-		          gridLines: {
-		            display: false
-		          },
-		          ticks: {
-		            fontColor: '#aaa'
-		          }
-		        }],
-		        yAxes: [{
-		          gridLines: {
-		            display: false
-		          },
-		          ticks: {
-		            fontColor: '#aaa'
-		          }
-		        }]
-		      },
-		
-		      responsive: false,
-		      maintainAspectRatio: false
-		    }
-		  });
-		  chart2.resize();
-		  $('#samples-element').unblock();
-	  })
-	  .fail(function() {
-		  alert( "error" );
-		  $('#samples-element').unblock();
-	  });
-  }
-  
-  
-  //Grafico de casos confirmados por region
-  function casosxRegion (){
-	  $('#regions-element').block({
-	      message: '<div class="sk-wave sk-primary"><div class="sk-rect sk-rect1"></div> <div class="sk-rect sk-rect2"></div> <div class="sk-rect sk-rect3"></div> <div class="sk-rect sk-rect4"></div> <div class="sk-rect sk-rect5"></div></div>',
-	      css: {
-	        backgroundColor: 'transparent',
-	        border: '0'
+	  noUiSlider.create(dateSlider, {
+		  // Create two timestamps to define a range.
+	      range: {
+	          min: timestamp('2018-01-01'),
+	          max: timestamp(new Date())
 	      },
-	      overlayCSS:  {
-	        backgroundColor: '#fff',
-	        opacity: 0.8
-	      }
-	    });
-	  $.getJSON(parametros.regionesUrl, $('#filters-form').serialize(), function(data) {
-		  var nivelOu = "";
-		  if($('#oulevel').val()=="ALL"){
-			  nivelOu = parametros.region;
+
+	      // Steps of one day
+	      step: 24 * 60 * 60 * 1000,
+	      direction: isRtl ? 'rtl' : 'ltr',
+
+	      // Two more timestamps indicate the handle starting positions.
+	      
+	      start: [timestamp(firstDay), timestamp(new Date())],
+
+	      connect: true,
+		  behaviour: 'tap',
+		  pips: {
+			  mode: 'positions',
+		      values: [],
+		      stepped: true,
+		      density: 2,
+		      format: wNumb({
+		            decimals: 0
+		        })
 		    }
-		    else if ($('#oulevel').val() == "region.samp"){
-		    	nivelOu = parametros.distrito;
-		    }
-		    else if ($('#oulevel').val() == "province.samp"){
-		    	nivelOu = parametros.distrito;
-		    }
-		    else if ($('#oulevel').val() == "district.samp"){
-		    	nivelOu =parametros.corregimiento;
-		    }
-		    else if ($('#oulevel').val() == "correg.samp"){
-		    	nivelOu =parametros.localidad;
-		    }
-		  
-		  var table3 = $('#regionstable').DataTable({
-			  dom: 'lBfrtip',
-	          "oLanguage": {
-	              "sUrl": parametros.dataTablesLang
-	          },
-	          "bFilter": false, 
-	          "bInfo": true, 
-	          "bPaginate": true, 
-	          "bDestroy": true,
-	          "responsive": true,
-	          "pageLength": 4,
-	          "bLengthChange": false,
-	          "responsive": true,
-	          "columns": [
-	        	    { "title": nivelOu },
-	        	    null,
-	        	    null,
-	        	    null
-	        	  ],
-	          "buttons": [
-	              {
-	                  extend: 'excel'
-	              },
-	              {
-	                  extend: 'pdfHtml5',
-	                  orientation: 'portrait',
-	                  pageSize: 'LETTER'
-	              }
-	          ]
-	      });
-		  table3.clear().draw();
-		  var regiones = [];
-		  var casos = [];
-		  var region = "";
-		  
-		  if($('#oulevel').val()=="ALL"){
-			  region = $('#oulevel').select2('data')[0].text;
-			  $('#labelChart3Title').html(parametros.casos + ' ' + $('#anio').val());
-			  $('#labelTable3Title').html(parametros.casos + ' ' + $('#anio').val());
-		  }
-		  else{
-			  region = $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text;
-			  $('#labelChart3Title').html(parametros.casos + ', ' + $('#anio').val()+ ' ' + $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
-			  $('#labelTable3Title').html(parametros.casos + ', ' + $('#anio').val()+ ' ' + $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
-		  }
-		  
-		  
-		  for (var row in data) {
-			  regiones.push([data[row][0]]);
-			  casos.push([data[row][1]]);
-			  table3.row.add([data[row][0], $('#anio').val(), data[row][1], region]);
-		  }
-		  
-		  chart3.destroy();
-		  chart3 = new Chart(document.getElementById('regions-chart').getContext("2d"), {
-		    type: 'bar',
-		    data: {
-		      labels: regiones,
-		      datasets: [{
-		        label: parametros.casos,
-		        data: casos,
-		        borderWidth: 1,
-		        backgroundColor: 'rgba(28,180,255,.05)',
-		        borderColor: 'rgba(28,180,255,1)'
-		      }],
-		    },
-		    options: {
-		      scales: {
-		        xAxes: [{
-		          gridLines: {
-		            display: false
-		          },
-		          ticks: {
-		            fontColor: '#aaa'
-		          }
-		        }],
-		        yAxes: [{
-		          gridLines: {
-		            display: false
-		          },
-		          ticks: {
-		            fontColor: '#aaa'
-		          }
-		        }]
-		      },
-		
-		      responsive: false,
-		      maintainAspectRatio: false
-		    }
-		  });
-		  chart3.resize();
-		  $('#regions-element').unblock();
-	  })
-	  .fail(function() {
-		  alert( data );
-		  $('#regions-element').unblock();
-	  });
-  }
-  
-  //Cuando se hace clic en las regiones
-  $("#regions-chart").click(function(e) {
-	   var activeBars = chart3.getElementAtEvent(e); 
-	   
-	   if (activeBars.length > 0) {
-		    var clickedDatasetIndex = activeBars[0]._datasetIndex;
-		    var clickedElementindex = activeBars[0]._index;
-		    label = chart3.data.labels[clickedElementindex];
-		    clickChart = true;
-		    if($('#oulevel').val()=="ALL"){
-		    	$('#oulevel').val("region.samp").change();
-		    }
-		    else if ($('#oulevel').val() == "region.samp"){
-		    	$('#oulevel').val("district.samp").change();
-		    }
-		    else if ($('#oulevel').val() == "province.samp"){
-		    	$('#oulevel').val("district.samp").change();
-		    }
-		    else if ($('#oulevel').val() == "district.samp"){
-		    	$('#oulevel').val("correg.samp").change();
-		    }
-	   }
-	   
-	});
-  
-  
-  $("#anterior").click(function(e) {	  
-	   var actual = parseInt($('#anio').val());
-	   actual = actual -1;
-	   if($("#anio option:contains('"+actual+"')").val()){
-		   $('#anio').val($("#anio option:contains('"+actual+"')").val()).change();
-		   $("#actualizar").click();
-	   }
-	});
-  
-  $("#siguiente").click(function(e) {
-	   var actual = parseInt($('#anio').val());
-	   actual = actual + 1;
-	   if($("#anio option:contains('"+actual+"')").val()){
-		   $('#anio').val($("#anio option:contains('"+actual+"')").val()).change();
-		   $("#actualizar").click();
-	   }
-	});
- 
-  
-  //Total de localidades con busqueda
-  function locBusq (){
-	  $.getJSON(parametros.locbusqUrl, $('#filters-form').serialize(), function(data) {
-		  $('#localities').html(data);
-	  })
-	  .fail(function() {
-		  alert( data );
 	  });
 	  
-  }
-  
-  // Resizing charts
+	  var inputStart = document.getElementById('fechaInicio');
+	  var labelStart = document.getElementById('labelFechaInicio');
+	  var inputEnd = document.getElementById('fechaFin');
+	  var labelEnd = document.getElementById('labelFechaFin');
 
-  function resizeCharts() {
-    chart1.resize();
-    chart2.resize();
-    chart3.resize();
-  }
+	  dateSlider.noUiSlider.on('update', function (values, handle) {
+			inputStart.value = formatDate(new Date(+values[0]));
+			labelStart.innerHTML = formatDate(new Date(+values[0]));
+			inputEnd.value = formatDate(new Date(+values[1]));
+			labelEnd.innerHTML = formatDate(new Date(+values[1]));
+	  });
+		
+	  dateSlider.noUiSlider.on('set', function () {
+		  bloquearElemento();
+		  layerGroup.removeLayer(layerDatos);
+    	  mymap.removeControl(legend);
+    	  getData(mymap.getZoom());
+	  });
 
-  // For performance reasons resize charts on delayed resize event
-  window.layoutHelpers.on('resize.portada', resizeCharts);
-  
-  
+
+	  // Create a string representation of the date.
+	  function formatDate(date) {
+		 var yyyy = date.getFullYear().toString();                                    
+	     var mm = (date.getMonth()+1).toString(); // getMonth() is zero-based         
+	     var dd  = date.getDate().toString();             
+	     return yyyy + '-' + (mm[1]?mm:"0"+mm[0]) + '-' + (dd[1]?dd:"0"+dd[0]);
+	  }
+	  
+	  var layerDatos;
+	  
+	  var mymap = L.map('mapid').setView([8.398598, -80.108896], 8);
+	  var layerGroup = new L.LayerGroup();
+	  
+	  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox.streets'
+	  }).addTo(mymap);
+	  layerGroup.addTo(mymap);
+	  var legend = L.control( { position: 'bottomright' } );
+	  
+	  	
+	  mymap.on('zoomend', function() {
+		  var zoomFinal = mymap.getZoom();
+		  if(zoomFinal>=8 && zoomFinal <=11){
+			  bloquearElemento();
+			  layerGroup.removeLayer(layerDatos);
+	    	  mymap.removeControl(legend);
+			  cargarMapa(zoomFinal);
+		  }
+	  });
+	  
+	  
+	  bloquearElemento();
+	  getData(8);
+	  
+	  
+	  function getData(nivel){
+	  
+		  var promise = $.getJSON(parametros.datosUrl, $('#filters-form').serialize());
+		  
+		  promise.then(function(data) {
+			  var i = 0;
+			  for (var row in data) {
+				  i=0;
+				  for (i==0;i<data[row].length;i++) {
+					  if(row==0){
+						  ponerValorRegion(data[row][i][0],data[row][i][1]);
+					  }
+					  if(row==1){
+						  ponerValorDistrito(data[row][i][0],data[row][i][1]);
+					  }
+					  if(row==2){
+						  ponerValorCorregimiento(data[row][i][0],data[row][i][1]);
+					  }
+					  if(row==3){
+						  ponerValorLocalidad(data[row][i][0],data[row][i][1]);
+					  }
+				  }
+			  }
+			  for (var i=0; i<regionesData.features.length;i++){
+		 		if(regionesData.features[i].properties.cases==null){
+		 			regionesData.features[i].properties.cases=0;
+		 		}
+			  }
+			  for (var i=0; i<distritosData.features.length;i++){
+		 		if(distritosData.features[i].properties.cases==null){
+		 			distritosData.features[i].properties.cases=0;
+		 		}
+			  }
+			  for (var i=0; i<corregimientosData.features.length;i++){
+		 		if(corregimientosData.features[i].properties.cases==null){
+		 			corregimientosData.features[i].properties.cases=0;
+		 		}
+			  }
+			  for (var i=0; i<localidadesData.features.length;i++){
+		 		if(localidadesData.features[i].properties.cases==null){
+		 			localidadesData.features[i].properties.cases=0;
+		 		}
+			  }
+			  cargarMapa(nivel);
+		  });
+	  }
+	  
+	  
+	  function cargarMapa(nivel){
+		  var datosVal =[];
+		  var dataDatos;
+		  var leyendaTitulo;
+		  var colorPunto;
+		  if(nivel<=8){
+			  dataDatos = regionesData;
+			  leyendaTitulo = parametros.creg;
+			  colorPunto = "#708598";
+			  cssCirculo = "legendCircle1";
+		  }
+		  else if(nivel==9){
+			  dataDatos = distritosData;
+			  leyendaTitulo = parametros.cdis;
+			  colorPunto = "#0571b0";
+			  cssCirculo = "legendCircle2";
+		  }
+		  else if(nivel==10){
+			  dataDatos = corregimientosData;
+			  leyendaTitulo = parametros.ccor;
+			  colorPunto = "#92c5de";
+			  cssCirculo = "legendCircle3";
+		  }
+		  else if(nivel>=11){
+			  dataDatos = localidadesData;
+			  leyendaTitulo = parametros.cloc;
+			  colorPunto = "#f4a582";
+			  cssCirculo = "legendCircle4";
+		  }
+		  else{
+			  dataDatos = null;
+			  leyendaTitulo = "";
+		  }
+		  layerDatos = L.geoJson(dataDatos, {		
+			  pointToLayer: function(feature, latlng) {	
+	    		  if(feature.properties.cases>0){
+	    			  return L.circleMarker(latlng, { 
+	    	  				fillColor: colorPunto,
+	    	  				color: '#537898',
+	    	  				weight: 1, 
+	    	  				fillOpacity: 0.7 
+	    			  }).on({
+	    				  mouseover: function(e) {
+	    					  this.openPopup();
+	    					  this.setStyle({color: 'yellow'});
+	    				  },
+	    				  mouseout: function(e) {
+	    					  this.closePopup();
+	    					  this.setStyle({color: '#537898'});						
+	    				  },
+	    				  click: function(e){
+	    					  mymap.setView(e.target.getLatLng(),mymap.getZoom()+1);
+	    				  }
+	    			  });
+	    		  }
+	    	  }
+		  });
+		  layerGroup.addLayer(layerDatos);
+		  layerDatos.eachLayer(function(layer) {
+			  var casos = layer.feature.properties.cases;
+			  var radius = calcPropRadius(casos);
+			  datosVal.push(casos);
+			  var popupContent;
+			  if(nivel==8){
+				  popupContent = "<b>" + casos + " " + parametros.cases +
+					" </b><br>" +
+					"<i>" + layer.feature.properties.nombre_region;
+			  }
+			  else if(nivel==9){
+				  popupContent = "<b>" + casos + " " + parametros.cases +
+					" </b><br>" +
+					"<i>" + layer.feature.properties.nombre_distrito;
+			  }
+			  else if(nivel==10){
+				  popupContent = "<b>" + casos + " " + parametros.cases +
+					" </b><br>" +
+					"<i>" + layer.feature.properties.nombre_corregimiento;
+			  }
+			  else if(nivel==11){
+				  popupContent = "<b>" + casos + " " + parametros.cases +
+					" </b><br>" +
+					"<i>" + layer.feature.properties.LOCALIDAD_v2;
+			  }
+			  else{
+				  dataDatos = null;
+				  leyendaTitulo = "";
+			  }
+			  layer.setRadius(radius);
+			  layer.bindPopup(popupContent, { offset: new L.Point(0,-radius) });
+		  });
+		  legend = L.control( { position: 'bottomright' } );
+		  
+		  legend.onAdd = function(mymap) {
+			  	var radio1 = Math.min.apply(Math,datosVal);
+			  	var radio4 = Math.max.apply(Math,datosVal);
+				var radio2 = (radio4-radio1)/3;
+				var radio3 = ((radio4-radio1)*2)/3;
+				var legendContainer = L.DomUtil.create("div", "legend");  
+				var symbolsContainer = L.DomUtil.create("div", "symbolsContainer");
+				var classes = [radio1,radio2,radio3,radio4]; 
+				var legendCircle;  
+				var lastRadius = 0;
+				var currentRadius;		
+				var margin;
+
+				L.DomEvent.addListener(legendContainer, 'mousedown', function(e) { 
+					L.DomEvent.stopPropagation(e); 
+				});  
+
+				$(legendContainer).append("<h5 id='legendTitle'>"+ leyendaTitulo +"</h5>");
+
+				for (var i = 0; i <= classes.length-1; i++) {  
+					legendCircle = L.DomUtil.create("div", cssCirculo);  
+					currentRadius = calcPropRadius(classes[i],nivel);
+					margin = -currentRadius - lastRadius - 2;
+					$(legendCircle).attr("style", "width: " + currentRadius*2 + 
+							"px; height: " + currentRadius*2 + 
+							"px; margin-left: " + margin + "px" );				
+					$(legendCircle).append("<span class='legendValue'>"+roundNumber(classes[i])+"</span>");
+					$(symbolsContainer).append(legendCircle);
+					lastRadius = currentRadius;
+				}
+
+				$(legendContainer).append(symbolsContainer); 
+
+				return legendContainer;
+		  }
+		  legend.addTo(mymap);
+		  $('#map-element').unblock();
+	  }
+	  
+	  function ponerValorRegion(region,valor) {
+ 		for (var i=0; i<regionesData.features.length;i++){
+ 			if(regionesData.features[i].properties.id_region==region){
+ 				regionesData.features[i].properties.cases=valor;
+ 			}
+		}
+	  }
+	  
+	  function ponerValorDistrito(distrito,valor) {
+ 		for (var i=0; i<distritosData.features.length;i++){
+ 			if(distritosData.features[i].properties.id_distrito==distrito){
+ 				distritosData.features[i].properties.cases=valor;
+ 			}
+		}
+	  }
+
+	  function ponerValorCorregimiento(corregimiento,valor) {
+ 		for (var i=0; i<corregimientosData.features.length;i++){
+ 			if(corregimientosData.features[i].properties.id_corregimiento==corregimiento){
+ 				corregimientosData.features[i].properties.cases=valor;
+ 			}
+		}
+	  }
+	  
+	  function ponerValorLocalidad(localidad,valor) {
+ 		for (var i=0; i<localidadesData.features.length;i++){
+ 			if(localidadesData.features[i].properties.ID1==localidad){
+ 				localidadesData.features[i].properties.cases=valor;
+ 			}
+		}
+	  }
+
+	  function roundNumber(inNumber) {
+		  return (Math.round(inNumber/10) * 10);  
+	  }
+	
+	  function calcPropRadius(attributeValue, level) {
+		  var scaleFactor = 6;
+		  var area = attributeValue * scaleFactor;
+		  return Math.sqrt(area/Math.PI)*2;
+	  }
+	  
+	  function bloquearElemento(){
+		  $('#map-element').block({
+		      message: '<div class="sk-wave sk-primary"><div class="sk-rect sk-rect1"></div> <div class="sk-rect sk-rect2"></div> <div class="sk-rect sk-rect3"></div> <div class="sk-rect sk-rect4"></div> <div class="sk-rect sk-rect5"></div></div>',
+		      css: {
+		        backgroundColor: 'transparent',
+		        border: '0'
+		      },
+		      overlayCSS:  {
+		        backgroundColor: '#fff',
+		        opacity: 0.8
+		      }
+		    });
+	  }
+    
  }
  
 };

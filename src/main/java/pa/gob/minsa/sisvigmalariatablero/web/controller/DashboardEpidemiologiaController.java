@@ -18,7 +18,7 @@ import pa.gob.minsa.sisvigmalariatablero.utils.DatosCanal;
 
 @Controller
 @RequestMapping("/view/epid/*")
-public class DashboardEpidemilogiaController {
+public class DashboardEpidemiologiaController {
 	
 	@Resource(name="messageResourceService")
 	private MessageResourceService messageResourceService;
@@ -26,7 +26,7 @@ public class DashboardEpidemilogiaController {
 	@Resource(name="dashboardEpidemiologiaService")
 	private DashboardEpidemiologiaService dashboardEpidemiologiaService;
 	
-    private static final Logger logger = LoggerFactory.getLogger(DashboardEpidemilogiaController.class);
+    private static final Logger logger = LoggerFactory.getLogger(DashboardEpidemiologiaController.class);
 
     @RequestMapping(value = "/canal/", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody List<DatosCanal> obtenerCanal(@RequestParam(value = "anio", required = true) Integer anio,
@@ -48,5 +48,16 @@ public class DashboardEpidemilogiaController {
         List<Object[]> datos = dashboardEpidemiologiaService.getDatosCarga(oulevel,ouname);
         return datos;
     }    
+    
+    @RequestMapping(value = "/provinciasmapa/", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody List<Object[]> obtenerCasosxProvincia(@RequestParam(value = "anio", required = true) Integer anio,
+    		@RequestParam(value = "oulevel", required = true) String oulevel,
+    		@RequestParam(value = "ouname", required = false, defaultValue="") String ouname
+    		) throws ParseException {
+        logger.info("Obteniendo casos confirmados por provincia");
+        
+        List<Object[]> datos = dashboardEpidemiologiaService.getDatosCasosxOU(anio,oulevel,ouname);
+        return datos;
+    }
     
 }
