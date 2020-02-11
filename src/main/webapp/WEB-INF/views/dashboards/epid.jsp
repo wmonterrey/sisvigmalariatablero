@@ -39,7 +39,7 @@
 			            </h4>
 			            <!-- Filtros -->
 			            <div class="row">
-			              <div class="col-sm-6 col-xl-12">
+			              <div class="col-sm-12 col-md-12 col-xl-12">
 			                <div class="card mb-4">
 			                  <div class="card mb-4">
 									<div class="card-body">
@@ -65,6 +65,7 @@
 						                  				<option value="district.samp"><spring:message code="district.samp" /></option>
 						                  				<option value="correg.samp"><spring:message code="correg.samp" /></option>
 						                  				<option value="local.samp"><spring:message code="local.samp" /></option>
+						                  				<option value="foci.samp"><spring:message code="foci.samp" /></option>
 						                  			</select>
 						               			</div>
 						                    </div>
@@ -332,12 +333,19 @@
   	<spring:url value="/resources/maps/provincias.geojson" var="ProvinciasPanama" />
     <script src="${ProvinciasPanama}" type="text/javascript"></script>
     
-    <spring:url value="/view/epid/provinciasmapa/" var="provinciasUrl"/>
+    <spring:url value="/resources/maps/distritos.geojson" var="DistritosPanama" />
+    <script src="${DistritosPanama}" type="text/javascript"></script>
+    
+    <spring:url value="/resources/maps/corregimientos.geojson" var="CorregimientosPanama" />
+    <script src="${CorregimientosPanama}" type="text/javascript"></script>
+    
+    <spring:url value="/view/epid/epidmapa/" var="mapaUrl"/>
   	
   	<spring:url value="/api/regiones" var="opcRegUrl"/>
   	<spring:url value="/api/provincias" var="opcProvUrl"/>
   	<spring:url value="/api/distritos" var="opcDistUrl"/>
   	<spring:url value="/api/corregimientos" var="opcCorregUrl"/>
+  	<spring:url value="/api/focos" var="opcFocosUrl"/>
   	<spring:url value="/api/localidades/" var="localidadesUrl"/>
   	
   	<!-- Mensajes -->
@@ -359,9 +367,9 @@
 		jQuery(document).ready(function() {
 			var parametros = {canalUrl: "${canalUrl}",cargaUrl: "${cargaUrl}",
 					seleccionar: "${seleccionar}",opcRegUrl: "${opcRegUrl}",localidadesUrl: "${localidadesUrl}"
-						, ourequerida: "${ourequerida}",opcProvUrl: "${opcProvUrl}",opcDistUrl: "${opcDistUrl}",opcCorregUrl: "${opcCorregUrl}"
-							,total: "${total}",canal: "${canal}",dataTablesLang: "${dataTablesLang}",casos: "${casos}"
-								,tipobusq: "${tipobusq}",active: "${active}",pasive: "${pasive}",sdtb: "${sdtb}",reactive: "${reactive}",survey: "${survey}",provinciasUrl: "${provinciasUrl}"};
+						, ourequerida: "${ourequerida}",opcProvUrl: "${opcProvUrl}",opcDistUrl: "${opcDistUrl}",opcCorregUrl: "${opcCorregUrl}",opcFocosUrl: "${opcFocosUrl}"
+							,total: "${total}",canal: "${canal}",dataTablesLang: "${dataTablesLang}",casos: "${casos}",lenguaje: "${lenguaje}"
+								,tipobusq: "${tipobusq}",active: "${active}",pasive: "${pasive}",sdtb: "${sdtb}",reactive: "${reactive}",survey: "${survey}",mapaUrl: "${mapaUrl}"};
 			ProcessDashboardEpid.init(parametros);
 			
 			if ($('html').attr('dir') === 'rtl') {

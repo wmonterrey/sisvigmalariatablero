@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import pa.gob.minsa.sisvigmalariatablero.domain.Corregimiento;
 import pa.gob.minsa.sisvigmalariatablero.domain.Distrito;
+import pa.gob.minsa.sisvigmalariatablero.domain.Foco;
 import pa.gob.minsa.sisvigmalariatablero.domain.ItemCorregimiento;
 import pa.gob.minsa.sisvigmalariatablero.domain.ItemLocalidad;
 import pa.gob.minsa.sisvigmalariatablero.domain.ItemUnidad;
@@ -17,6 +18,7 @@ import pa.gob.minsa.sisvigmalariatablero.domain.ResultCorregimientos;
 import pa.gob.minsa.sisvigmalariatablero.domain.ResultLocalidades;
 import pa.gob.minsa.sisvigmalariatablero.domain.ResultUnidades;
 import pa.gob.minsa.sisvigmalariatablero.domain.UnidadNotificadora;
+import pa.gob.minsa.sisvigmalariatablero.service.FocoService;
 import pa.gob.minsa.sisvigmalariatablero.service.OUService;
 
 import javax.annotation.Resource;
@@ -36,6 +38,8 @@ public class OUController {
 
     @Resource(name = "ouService")
     private OUService ouService;
+    @Resource(name = "focoService")
+    private FocoService focoService;
     
     /**
      * Retorna provincias. Acepta una solicitud GET para JSON
@@ -95,6 +99,21 @@ public class OUController {
         	logger.debug(new Date() + " - corregimientos - Nulo");
         }
         return  corregimientos;
+    }
+    
+    /**
+     * Retorna focos. Acepta una solicitud GET para JSON
+     * @return Distrito JSON
+     */
+    @RequestMapping(value = "focos", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody List<Foco> getFocos(){
+        logger.info("Descargando toda la informacion de los datos de los focos");
+        
+        List<Foco> focos = this.focoService.getActiveFocos();
+        if (focos == null){
+        	logger.debug(new Date() + " - focos - Nulo");
+        }
+        return  focos;
     }
     
     /**

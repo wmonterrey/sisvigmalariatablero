@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import pa.gob.minsa.sisvigmalariatablero.service.DashboardPortadaService;
 import pa.gob.minsa.sisvigmalariatablero.service.MapService;
 
 
@@ -33,6 +34,9 @@ public class MapController {
 	@Resource(name="mapService")
 	private MapService mapService;
 	
+	@Resource(name="dashboardPortadaService")
+	private DashboardPortadaService dashboardPortadaService;
+	
 	/**
      * Custom handler for showing the export.
      * @param model Modelo enlazado a la vista
@@ -41,6 +45,8 @@ public class MapController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
 	public String showMapPage(Model model) {
     	logger.info("showing Map page ..");
+    	List<Integer> anios = this.dashboardPortadaService.getAniosDB();
+    	model.addAttribute("anios", anios);
     	return "mapas/mapa";
 	}
     

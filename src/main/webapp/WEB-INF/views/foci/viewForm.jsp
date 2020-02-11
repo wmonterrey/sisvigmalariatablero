@@ -124,16 +124,16 @@
 			              
 			              <div>
 	          				<div class="row float-right mr-4" >
-	          					<button id="edit_entity" onclick="location.href='${fn:escapeXml(editUrl)}'" type="button" class="btn btn-outline-primary"><i class="fa fa-pencil"></i>&nbsp; <spring:message code="edit" /></button>
+	          					<button id="edit_entity" onclick="location.href='${fn:escapeXml(editUrl)}'" type="button" class="btn btn-outline-primary"><i class="fa fa-pencil-alt"></i>&nbsp; <spring:message code="edit" /></button>
 	          					<c:choose>
 									<c:when test="${foco.pasive=='0'.charAt(0)}">
-										<button id="disable_entity" onclick="location.href='${fn:escapeXml(disableUrl)}'" type="button" class="btn btn-outline-danger"><i class="fa fa-close"></i>&nbsp; <spring:message code="disable" /></button>
+										<button id="disable_entity" onclick="location.href='${fn:escapeXml(disableUrl)}'" type="button" class="btn btn-outline-danger"><i class="fa fa-window-close"></i>&nbsp; <spring:message code="disable" /></button>
 									</c:when>
 									<c:otherwise>
 										<button id="enable_entity" onclick="location.href='${fn:escapeXml(enableUrl)}'" type="button" class="btn btn-outline-primary"><i class="fa fa-check"></i>&nbsp; <spring:message code="enable" /></button>
 									</c:otherwise>
 							 	</c:choose>
-	          					<button id="back_button" onclick="location.href='<spring:url value="/foci/" htmlEscape="true "/>'" type="button" class="btn btn-outline-primary"><i class="fa fa-undo"></i>&nbsp; <spring:message code="back" /></button>
+	          					<button id="back_button" onclick="location.href='<spring:url value="/foci/" htmlEscape="true "/>'" type="button" class="btn btn-outline-primary"><i class="fa fa-undo"></i>&nbsp; <spring:message code="cancel" /></button>
 	          				</div>
 	            		  </div>
 			              
@@ -142,7 +142,7 @@
 			            
 			            <div class="card mb-4" id="viewuser-element-2">
 			              <h6 class="card-header with-elements">
-			                <div class="card-header-title"><i class="fa fa-check"></i>&nbsp;<strong><spring:message code="local.samp" />s</strong></div>
+			                <div class="card-header-title"><i class="fa fa-map"></i>&nbsp;<strong><spring:message code="local.samp" /></strong></div>
 			              </h6>
 			              <div class="col-md-12 col-lg-12 col-xl-12">
 			                <div class="card-body">
@@ -157,11 +157,15 @@
 					                </thead>
 					                <tbody>
 					                	<c:forEach items="${localidadesSeleccionadas}" var="localidadfoco">
+					                		<spring:url value="/foci/disableLoc/{ident}/{locality}/" var="disableLocalUrl">
+								              	<spring:param name="ident" value="${foco.ident}" />
+								              	<spring:param name="locality" value="${localidadfoco.ident}" />
+								            </spring:url>
 											<tr>
 												<td><c:out value="${localidadfoco.name}" /></td>
 												<td><c:out value="${localidadfoco.corregimiento.name}" /></td>
 												<td><c:out value="${localidadfoco.corregimiento.distrito.region.name}" /></td>
-												<td></td>
+												<td><button id="disable_local" onclick="location.href='${fn:escapeXml(disableLocalUrl)}'" type="button" class="btn btn-outline-danger"><i class="fa fa-window-close"></i></button></td>
 											</tr>
 										</c:forEach>
 					                </tbody>
@@ -192,20 +196,15 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h2 class="modal-title"><spring:message code="add" /> <spring:message code="userlocs" /></h2>
+					<h2 class="modal-title"><spring:message code="add" /> <spring:message code="local.samp" /></h2>
 				</div>
 				<div class="modal-body">
 					<input type="hidden" id="inputAddLocalidadUrl"/>
-					<div id="cuerpo">
-		                 	<i class="fa fa-map-o"></i>
-		                    <label><spring:message code="userlocs" /></label>
-		                    <select id="localidades" name="localidades" class="form-control select2-single">
-		                      <c:forEach items="${localidades}" var="localidad">
-		                      	<option value="${localidad.ident}">${localidad.name}-${localidad.district.name}-${localidad.district.area.name}</option>
-		                      </c:forEach>
-		                    </select>
+					<div id="cuerpo" class="select2-primary">
+	                  	<select id="localidades" name="localidades" class="select2-filtro form-control" style="width: 100%">
+	                  	</select>
 					</div>
-				</div>
+				</div>	
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="cancel" /></button>
 					<button type="button" id="buttonAgregarLoalidad" class="btn btn-info" onclick="ejecutarAgregarLocalidad()"><spring:message code="ok" /></button>
@@ -230,41 +229,36 @@
 		<c:set var="lenguaje" value="${cookie.esisvigLang.value}"/>
 	</c:otherwise>
 	</c:choose>
+	
+	<spring:url value="/resources/js/views/foco.js" var="Foco" />
+  	<script src="${Foco}" type="text/javascript"></script>
   	
   	<spring:url value="/resources/vendor/libs/datatables/label_{language}.json" var="dataTablesLang">
   		<spring:param name="language" value="${lenguaje}" />
   	</spring:url>	
+  	
+  	<spring:url value="/resources/vendor/libs/select2/select2_{language}.js" var="select2Lang">
+  		<spring:param name="language" value="${lenguaje}" />
+  	</spring:url>
+  	<script src="${select2Lang}"></script>
+  	
+  	<spring:url value="/api/localidades/" var="localidadesUrl"/>
 
-  <c:set var="entityEnabledLabel"><spring:message code="enabled" /></c:set>
-  <c:set var="entityDisabledLabel"><spring:message code="disabled" /></c:set>
+    <c:set var="entityEnabledLabel"><spring:message code="enabled" /></c:set>
+    <c:set var="entityDisabledLabel"><spring:message code="disabled" /></c:set>
+    <c:set var="seleccionar"><spring:message code="select" /></c:set>
+    <c:set var="ourequerida"><spring:message code="ou.required" /></c:set>
 
 	<script>
 		jQuery(document).ready(function() {
+			var parametros = {seleccionar: "${seleccionar}",lenguaje: "${lenguaje}",dataTablesLang: "${dataTablesLang}",localidadesUrl: "${localidadesUrl}"};
+			ProcessLocalidad.init(parametros);
+			
+			if ($('html').attr('dir') === 'rtl') {
+				$('#navbar-filtros .dropdown-menu').addClass('dropdown-menu-right');
+			}
 	    	$("li.foci").addClass("active");
-	    	$('#lista_localidades').DataTable({
-				  dom: 'lBfrtip',
-		          "oLanguage": {
-		              "sUrl": "${dataTablesLang}"
-		          },
-		          "bFilter": true, 
-		          "bInfo": true, 
-		          "bPaginate": true, 
-		          "bDestroy": true,
-		          "responsive": true,
-		          "pageLength": 10,
-		          "bLengthChange": true,
-		          "responsive": true,
-		          "buttons": [
-		              {
-		                  extend: 'excel'
-		              },
-		              {
-		                  extend: 'pdfHtml5',
-		                  orientation: 'portrait',
-		                  pageSize: 'LETTER'
-		              }
-		          ]
-		      });	
+			
 	    });
 		
 		
@@ -275,6 +269,7 @@
 			    progressBar: true,
 			  } );
 		}
+
 		if ("${entidadDeshabilitada}"){
 			toastr.error("${entityDisabledLabel}", "${nombreEntidad}" , {
 			    closeButton: true,
@@ -282,19 +277,14 @@
 			  });
 		}
 		
-	    $("#addLocalidad").click(function(){ 
-			$('#inputAddLocalidadUrl').val($(this).data('whatever'));
-			if($('#localidades').val()) {
-				$('#localidadesForm').modal('show');
-			}
-			else{
-				toastr.info("${allLocalidadesLabel}", "" ,{
-				    closeButton: true,
-				    progressBar: true,
-				  } );
-			}
-	    });
-
+	  function ejecutarAgregarLocalidad() {
+		  if($('#localidades').select2('data')[0]===undefined){
+			  alert("${ourequerida}");
+		  }
+		  else{
+			window.location.href = $('#inputAddLocalidadUrl').val()+$('#localidades').val()+'/';
+		  }
+		}
 		
 	</script>
 	

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import pa.gob.minsa.sisvigmalariatablero.domain.Localidad;
 import pa.gob.minsa.sisvigmalariatablero.domain.MalariaCasoReporte;
 import pa.gob.minsa.sisvigmalariatablero.service.CatalogosService;
+import pa.gob.minsa.sisvigmalariatablero.service.DashboardPortadaService;
 import pa.gob.minsa.sisvigmalariatablero.service.ExportService;
 import pa.gob.minsa.sisvigmalariatablero.service.OUService;
 
@@ -45,6 +46,9 @@ public class ExportController {
 	@Resource(name = "catalogosService")
     private CatalogosService catalogosService;
 	
+	@Resource(name="dashboardPortadaService")
+	private DashboardPortadaService dashboardPortadaService;
+	
 	/**
      * Custom handler for showing the export.
      * @param model Modelo enlazado a la vista
@@ -53,6 +57,8 @@ public class ExportController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
 	public String showExportPage(Model model) {
     	logger.info("showing Export page ..");
+    	List<Integer> anios = this.dashboardPortadaService.getAniosDB();
+    	model.addAttribute("anios", anios);
     	return "export/export";
 	}
     

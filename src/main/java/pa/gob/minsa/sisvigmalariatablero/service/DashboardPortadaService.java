@@ -30,7 +30,7 @@ public class DashboardPortadaService {
 	private SessionFactory sessionFactory;
 	
 	/**
-	 * Regresa años con registros en la base de datos
+	 * Regresa aï¿½os con registros en la base de datos
 	 * 
 	 * @return lista de objetos
 	 */
@@ -39,14 +39,14 @@ public class DashboardPortadaService {
 		// Retrieve session from Hibernate
 		Session session = sessionFactory.getCurrentSession();
 		// Create a Hibernate query (HQL)
-		Query query = session.createQuery("SELECT mc.anioEpi FROM MalariaCaso mc where mc.anioEpi >= 2018 GROUP BY mc.anioEpi order by mc.anioEpi desc");
+		Query query = session.createQuery("SELECT mc.anioEpi FROM MalariaCaso mc where mc.anioEpi >= 2018 and mc.eliminado='0' GROUP BY mc.anioEpi order by mc.anioEpi desc");
 		// Retrieve all
 		return  query.list();
 	}
 	
 	
 	/**
-	 * Regresa datos de casos confirmados por período
+	 * Regresa datos de casos confirmados por perï¿½odo
 	 * 
 	 * @return lista de objetos
 	 */
@@ -88,13 +88,13 @@ public class DashboardPortadaService {
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por región
+		//Por regiï¿½n
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.ident =:ouname ";
 		}
 		//Por Provincia
 		else if(oulevel.equals("province.samp")) {
-			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.provincia.ident =:ouname ";
+			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.provincia.ident =:ouname ";
 		}
 		//Por Distrito
 		else if(oulevel.equals("district.samp")) {
@@ -108,6 +108,10 @@ public class DashboardPortadaService {
 		else if(oulevel.equals("local.samp")) {
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.ident =:ouname ";
 		}
+		//Por foco
+		else if(oulevel.equals("foci.samp")) {
+			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.ident in (select fl.focoLocalidadId.localidad from FocoLocalidad fl where fl.focoLocalidadId.foco=:ouname and fl.pasive = '0') ";
+		}
 		
 		
 		// Retrieve session from Hibernate
@@ -120,25 +124,29 @@ public class DashboardPortadaService {
 		query.setParameter("eliminado", false);
 		query.setParameter("estado", "confirmado");
 		
-		//Parámetro región
+		//Parï¿½metro regiï¿½n
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro provincia
+		//Parï¿½metro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro distrito
+		//Parï¿½metro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro corregimiento
+		//Parï¿½metro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro localidad
+		//Parï¿½metro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
+		}
+		//Parï¿½metro foco
+		else if(oulevel.equals("foci.samp")) {
+			query.setParameter("ouname", ouname);
 		}
 		// Retrieve all
 		resultadosTemp.addAll(query.list());
@@ -157,7 +165,7 @@ public class DashboardPortadaService {
 				resultadoF.add(dato);
 			}
 		}
-		//Si quiere verse por día inicializar la lista
+		//Si quiere verse por dï¿½a inicializar la lista
 		else if(timeview.equals("day.samp")) {
 			for (int i = 0 ; i < 367 ; i++){
 				DatosTiempo dato = new DatosTiempo(sdf.format(c.getTime()),anio,0,0,0);
@@ -180,7 +188,7 @@ public class DashboardPortadaService {
 	
 	
 	/**
-	 * Regresa datos de muestras por período
+	 * Regresa datos de muestras por perï¿½odo
 	 * 
 	 * @return lista de objetos
 	 */
@@ -211,7 +219,7 @@ public class DashboardPortadaService {
 		}
 		
 		/**
-		 * Regresa datos de muestras históricos
+		 * Regresa datos de muestras histï¿½ricos
 		 * 
 		 */
 		//Define en el query la vista de tiempo
@@ -225,17 +233,17 @@ public class DashboardPortadaService {
 			sqlQueryTiempoVista = "SELECT mc.fecha";
 			sqlQueryTiempoWhere = "se.fechaIni <= mc.fecha and se.fechaFin >= mc.fecha and se.anio=:anio";
 		}
-		//País
+		//Paï¿½s
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por región
+		//Por regiï¿½n
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and mc.localidad.corregimiento.distrito.region.ident =:ouname ";
 		}
 		//Por provincia
 		else if(oulevel.equals("province.samp")) {
-			sqlQueryRegionWhere = " and mc.localidad.corregimiento.distrito.region.provincia.ident =:ouname ";
+			sqlQueryRegionWhere = " and mc.localidad.corregimiento.distrito.provincia.ident =:ouname ";
 		}
 		//Por distrito
 		else if(oulevel.equals("district.samp")) {
@@ -249,7 +257,10 @@ public class DashboardPortadaService {
 		else if(oulevel.equals("local.samp")) {
 			sqlQueryRegionWhere = " and mc.localidad.ident =:ouname ";
 		}
-		
+		//Por foco
+		else if(oulevel.equals("foci.samp")) {
+			sqlQueryRegionWhere = " and mc.localidad.ident in (select fl.focoLocalidadId.localidad from FocoLocalidad fl where fl.focoLocalidadId.foco=:ouname and fl.pasive = '0') ";
+		}		
 		
 		
 		// Create a Hibernate query (HQL)
@@ -257,26 +268,30 @@ public class DashboardPortadaService {
 				+ " FROM Muestras mc, SemanaEpidemiologica se where " + sqlQueryTiempoWhere + sqlQueryRegionWhere
 				+ " )");
 		query.setParameter("anio", anio);
-		//Parámetro region
+		//Parï¿½metro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro provincia
+		//Parï¿½metro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro distrito
+		//Parï¿½metro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro corregimiento
+		//Parï¿½metro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro localidad
+		//Parï¿½metro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
+		//Parï¿½metro foco
+		else if(oulevel.equals("foci.samp")) {
+			query.setParameter("ouname", ouname);
+		}		
 		
 		// Retrieve all
 		resultadosTemp.addAll(query.list());
@@ -294,7 +309,7 @@ public class DashboardPortadaService {
 				resultadoF.add(dato);
 			}
 		}
-		//Si quiere verse por día inicializar la lista
+		//Si quiere verse por dï¿½a inicializar la lista
 		else if(timeview.equals("day.samp")) {
 			for (int i = 0 ; i < 367 ; i++){
 				DatosTiempo dato = new DatosTiempo(sdf.format(c.getTime()),anio,0,0,0);
@@ -327,17 +342,17 @@ public class DashboardPortadaService {
 			sqlQueryTiempoVista = "SELECT mc.pdrfecha";
 			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
 		}
-		//País
+		//Paï¿½s
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por región
+		//Por regiï¿½n
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.ident =:ouname ";
 		}
 		//Por provincia
 		else if(oulevel.equals("province.samp")) {
-			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.provincia.ident =:ouname ";
+			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.provincia.ident =:ouname ";
 		}
 		//Por distrito
 		else if(oulevel.equals("district.samp")) {
@@ -351,6 +366,10 @@ public class DashboardPortadaService {
 		else if(oulevel.equals("local.samp")) {
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.ident =:ouname ";
 		}
+		//Por foco
+		else if(oulevel.equals("foci.samp")) {
+			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.ident in (select fl.focoLocalidadId.localidad from FocoLocalidad fl where fl.focoLocalidadId.foco=:ouname and fl.pasive = '0') ";
+		}		
 				
 		// Create a Hibernate query (HQL)
 		query = session.createQuery(sqlQueryTiempoVista 
@@ -359,26 +378,30 @@ public class DashboardPortadaService {
 		query.setParameter("anio", anio);
 		query.setParameter("eliminado", false);
 		
-		//parámetro región
+		//parï¿½metro regiï¿½n
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//parámetro provincia
+		//parï¿½metro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//parámetro distrito
+		//parï¿½metro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//parámetro corregimiento
+		//parï¿½metro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//parámetro localidad
+		//parï¿½metro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
+		//Parï¿½metro foco
+		else if(oulevel.equals("foci.samp")) {
+			query.setParameter("ouname", ouname);
+		}		
 		
 		// Retrieve all
 		resultadosTemp.clear();
@@ -408,18 +431,18 @@ public class DashboardPortadaService {
 		List<Integer> localidadesSisvig = new ArrayList<Integer>();
 		Session session = sessionFactory.getCurrentSession();
 		
-		//Muestras históricas
-		//País
+		//Muestras histï¿½ricas
+		//Paï¿½s
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Región
+		//Regiï¿½n
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and mc.localidad.corregimiento.distrito.region.ident =:ouname ";
 		}
 		//Provincia
 		else if(oulevel.equals("province.samp")) {
-			sqlQueryRegionWhere = " and mc.localidad.corregimiento.distrito.region.provincia.ident =:ouname ";
+			sqlQueryRegionWhere = " and mc.localidad.corregimiento.distrito.provincia.ident =:ouname ";
 		}
 		//Distrito
 		else if(oulevel.equals("district.samp")) {
@@ -433,31 +456,38 @@ public class DashboardPortadaService {
 		else if(oulevel.equals("local.samp")) {
 			sqlQueryRegionWhere = " and mc.localidad.ident =:ouname ";
 		}
+		//Por foco
+		else if(oulevel.equals("foci.samp")) {
+			sqlQueryRegionWhere = " and mc.localidad.ident in (select fl.focoLocalidadId.localidad from FocoLocalidad fl where fl.focoLocalidadId.foco=:ouname and fl.pasive = '0') ";
+		}			
 		
 		Query query = session.createQuery("Select mc.localidad.ident FROM Muestras mc where year(mc.fecha)=:anio " + sqlQueryRegionWhere
 				+ "group by mc.localidad.ident");
 		query.setParameter("anio", anio);
-		//Parámetro región
+		//Parï¿½metro regiï¿½n
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro provincia
+		//Parï¿½metro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro distrito
+		//Parï¿½metro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro corregimiento
+		//Parï¿½metro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro localidad
+		//Parï¿½metro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		
+		//Parï¿½metro foco
+		else if(oulevel.equals("foci.samp")) {
+			query.setParameter("ouname", ouname);
+		}		
 		
 		localidadesHistoricas = query.list();
 		
@@ -473,17 +503,17 @@ public class DashboardPortadaService {
 			sqlQueryTiempoVista = "SELECT mc.pdrMuestraLocalidad.ident ";
 			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
 		}
-		//País
+		//Paï¿½s
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Región
+		//Regiï¿½n
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.ident =:ouname ";
 		}
 		//Provincia
 		else if(oulevel.equals("province.samp")) {
-			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.provincia.ident =:ouname ";
+			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.provincia.ident =:ouname ";
 		}
 		//Distrito
 		else if(oulevel.equals("district.samp")) {
@@ -497,32 +527,40 @@ public class DashboardPortadaService {
 		else if(oulevel.equals("local.samp")) {
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.ident =:ouname ";
 		}		
+		//Por foco
+		else if(oulevel.equals("foci.samp")) {
+			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.ident in (select fl.focoLocalidadId.localidad from FocoLocalidad fl where fl.focoLocalidadId.foco=:ouname and fl.pasive = '0') ";
+		}		
 		
 		query = session.createQuery(sqlQueryTiempoVista 
 				+ " FROM MalariaCaso mc, SemanaEpidemiologica se where " + sqlQueryTiempoWhere + sqlQueryRegionWhere
 				+ " and mc.eliminado=:eliminado and (mc.pruebaRapida=1 or mc.labResultado is not null) group by mc.pdrMuestraLocalidad.ident");
 		query.setParameter("anio", anio);
 		query.setParameter("eliminado", false);
-		//Parámetro región
+		//Parï¿½metro regiï¿½n
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro provincia
+		//Parï¿½metro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro distrito
+		//Parï¿½metro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro corregimiento
+		//Parï¿½metro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro localidad
+		//Parï¿½metro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
+		//Parï¿½metro foco
+		else if(oulevel.equals("foci.samp")) {
+			query.setParameter("ouname", ouname);
+		}			
 		
 		//Total de muestras en SISVIG
 		localidadesSisvig = query.list();
@@ -564,7 +602,7 @@ public class DashboardPortadaService {
 			sqlQueryRegionWhere="";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.distrito.region.name";
 		}
-		//Por región
+		//Por regiï¿½n
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.distrito.name, count(mc.id)";
 			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
@@ -575,7 +613,7 @@ public class DashboardPortadaService {
 		else if(oulevel.equals("province.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.distrito.name, count(mc.id)";
 			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
-			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.provincia.ident =:ouname ";
+			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.provincia.ident =:ouname ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.distrito.name";
 		}
 		//Por Distrito
@@ -599,6 +637,13 @@ public class DashboardPortadaService {
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.ident =:ouname ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.name";
 		}
+		//Por foco
+		else if(oulevel.equals("foci.samp")) {
+			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.name, count(mc.id)";
+			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.ident in (select fl.focoLocalidadId.localidad from FocoLocalidad fl where fl.focoLocalidadId.foco=:ouname and fl.pasive = '0') ";
+			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.name";
+		}
 		
 		
 		// Retrieve session from Hibernate
@@ -611,25 +656,29 @@ public class DashboardPortadaService {
 		query.setParameter("eliminado", false);
 		query.setParameter("estado", "confirmado");
 		
-		//Parámetro región
+		//Parï¿½metro regiï¿½n
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro provincia
+		//Parï¿½metro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro distrito
+		//Parï¿½metro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro corregimiento
+		//Parï¿½metro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro localidad
+		//Parï¿½metro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
+		}
+		//Parï¿½metro localidad
+		else if(oulevel.equals("foci.samp")) {
+			query.setParameter("ouname", ouname);
 		}
 		// Retrieve all
 		resultadosTemp.addAll(query.list());

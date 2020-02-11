@@ -49,12 +49,12 @@ public class DashboardEpidemiologiaController {
         return datos;
     }    
     
-    @RequestMapping(value = "/provinciasmapa/", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/epidmapa/", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody List<Object[]> obtenerCasosxProvincia(@RequestParam(value = "anio", required = true) Integer anio,
     		@RequestParam(value = "oulevel", required = true) String oulevel,
     		@RequestParam(value = "ouname", required = false, defaultValue="") String ouname
     		) throws ParseException {
-        logger.info("Obteniendo casos confirmados por provincia");
+        logger.info("Obteniendo casos confirmados por ou");
         
         List<Object[]> datos = dashboardEpidemiologiaService.getDatosCasosxOU(anio,oulevel,ouname);
         return datos;

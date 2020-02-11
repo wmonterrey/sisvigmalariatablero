@@ -4,6 +4,9 @@ var ProcessDashboardEpid = function () {
 return {
   //main function to initiate the module
   init: function (parametros) {
+	  
+  var clickMap = false;	 
+  var idArea = "";
 
   // Select2
   $(function() {
@@ -42,6 +45,11 @@ return {
     					html += '<option value="' + data[i].ident + '">'+ data[i].name +'</option>';
     				}
     				$('#ouname').html(html);
+    				if(clickMap){
+    					$('#ouname').val(idArea).change();
+    					$("#actualizar").click();
+    					clickMap = false;
+    				}
     			});
   			}
   			else if ($('#oulevel option:selected').val() == "region.samp"){
@@ -61,6 +69,11 @@ return {
     					html += '<option value="' + data[i].ident + '">'+ data[i].name +'</option>';
     				}
     				$('#ouname').html(html);
+    				if(clickMap){
+    					$('#ouname').val(idArea).change();
+    					$("#actualizar").click();
+    					clickMap = false;
+    				}
     			});
   			}
   			else if ($('#oulevel option:selected').val() == "district.samp"){
@@ -80,6 +93,11 @@ return {
     					html += '<option value="' + data[i].ident + '">'+ data[i].name + ' - ' + data[i].region.name +'</option>';
     				}
     				$('#ouname').html(html);
+    				if(clickMap){
+    					$('#ouname').val(idArea).change();
+    					$("#actualizar").click();
+    					clickMap = false;
+    				}
     			});
   			}
   			else if ($('#oulevel option:selected').val() == "correg.samp"){
@@ -97,6 +115,30 @@ return {
     				var len = data.length;
     				for ( var i = 0; i < len; i++) {
     					html += '<option value="' + data[i].ident + '">'+ data[i].name + ' - ' + data[i].distrito.region.name +'</option>';
+    				}
+    				$('#ouname').html(html);
+    				if(clickMap){
+    					$('#ouname').val(idArea).change();
+    					$("#actualizar").click();
+    					clickMap = false;
+    				}
+    			});
+  			}
+  			else if ($('#oulevel option:selected').val() == "foci.samp"){
+  				$("#ouname").wrap('<div class="position-relative"></div>')
+  		        .select2({
+  		          placeholder: parametros.seleccionar,
+  		          dropdownParent: $(this).parent(),
+  		          language:parametros.lenguaje
+  		        });
+  				$('#divouname').show();
+  				$.getJSON(parametros.opcFocosUrl, {
+    				ajax : 'true'
+    			}, function(data) {
+    				var html;
+    				var len = data.length;
+    				for ( var i = 0; i < len; i++) {
+    					html += '<option value="' + data[i].ident + '">'+ data[i].name  +'</option>';
     				}
     				$('#ouname').html(html);
     			});
@@ -324,7 +366,9 @@ return {
 		            display: false
 		          },
 		          ticks: {
-		            fontColor: '#aaa'
+		            fontColor: '#aaa',
+		            beginAtZero: true,
+		            precision:0
 		          }
 		        }]
 		      },
@@ -508,7 +552,9 @@ return {
 		            display: false
 		          },
 		          ticks: {
-		            fontColor: '#aaa'
+		            fontColor: '#aaa',
+		            beginAtZero: true,
+		            precision:0
 		          },
 		          stacked: true
 		        }]
@@ -570,7 +616,9 @@ return {
 		            display: false
 		          },
 		          ticks: {
-		            fontColor: '#aaa'
+		            fontColor: '#aaa',
+		            beginAtZero: true,
+		            precision:0
 		          },
 		          stacked: true
 		        }]
@@ -592,8 +640,31 @@ return {
   //Mapa
   function mapa (){
 	  document.getElementById('mapCard').innerHTML = "<div id='mapid' style='width: 100%; height: 600px;'></div>";
+	  $('#map-element').block({
+	      message: '<div class="sk-wave sk-primary"><div class="sk-rect sk-rect1"></div> <div class="sk-rect sk-rect2"></div> <div class="sk-rect sk-rect3"></div> <div class="sk-rect sk-rect4"></div> <div class="sk-rect sk-rect5"></div></div>',
+	      css: {
+	        backgroundColor: 'transparent',
+	        border: '0'
+	      },
+	      overlayCSS:  {
+	        backgroundColor: '#fff',
+	        opacity: 0.8
+	      }
+	    });
+	  
+	  var mymap = L.map('mapid').setView([8.398598, -80.108896], 8);
+	  
+	  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+			maxZoom: 18,
+			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+				'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+				'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+			id: 'mapbox.streets'
+		}).addTo(mymap);
+	  
+	  
 	  function getData( callback ){
-		 	$.getJSON(parametros.provinciasUrl, $('#filters-form').serialize(),function(data) {
+		 	$.getJSON(parametros.mapaUrl, $('#filters-form').serialize(),function(data) {
 		 		callback(data);
 		  	})
 		  	.fail(function() {
@@ -603,135 +674,256 @@ return {
 		
 		
 		getData( function ( datos ) { 
-  		for (var row in datos) {
-   			ponerValor(datos[row][0],datos[row][1]);
-  		}
-  		for (var i=0; i<provinciasData.features.length;i++){
-	 			if(provinciasData.features[i].properties.cases==null){
-					provinciasData.features[i].properties.cases=0;
-	 			}
+			var dataDatos;
+			var region;
+			if($('#oulevel').val()=="ALL"){
+				for (var i=0; i<provinciasData.features.length;i++){
+					provinciasData.features[i].properties.cases=null;
+					provinciasData.features[i].properties.mostrar=true;
+				}
+		  		for (var row in datos) {
+		  			ponerValorProvincias(datos[row][0],datos[row][1]);
+		  		}
+		  		for (var i=0; i<provinciasData.features.length;i++){
+		 			if(provinciasData.features[i].properties.cases==null){
+						provinciasData.features[i].properties.cases=0;
+		 			}
+				}
+		  		dataDatos = provinciasData;
+		  		region = "Panama"
 			}
-  		var mymap = L.map('mapid').setView([8.398598, -80.108896], 8);
-  	 	var theMarker = {};
-  	  	var locMarkers = new L.FeatureGroup();
-  	  	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-  			maxZoom: 18,
-  			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-  				'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-  				'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-  			id: 'mapbox.streets'
-  		}).addTo(mymap);
-  	  	
-  	  	
-  	  	
-  	 	// control that shows info on hover
-  		var info = L.control();
+			else if($('#oulevel').val()=="region.samp"){
+				for (var i=0; i<distritosData.features.length;i++){
+					distritosData.features[i].properties.cases=null;
+					if(distritosData.features[i].properties.GID_0===$('#ouname').val()){
+						distritosData.features[i].properties.mostrar=true;
+					}
+					else{
+						distritosData.features[i].properties.mostrar=false;
+					}
+					
+				}
+		  		for (var row in datos) {
+		  			ponerValorDistritos(datos[row][0],datos[row][1]);
+		  		}
+		  		for (var i=0; i<distritosData.features.length;i++){
+		 			if(distritosData.features[i].properties.cases==null){
+		 				distritosData.features[i].properties.cases=0;
+		 			}
+				}
+		  		dataDatos = distritosData;
+		  		region = $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text;
+			}
+			else if($('#oulevel').val()=="province.samp"){
+				for (var i=0; i<distritosData.features.length;i++){
+					distritosData.features[i].properties.cases=null;
+					if(distritosData.features[i].properties.GID_1===$('#ouname').val()){
+						distritosData.features[i].properties.mostrar=true;
+					}
+					else{
+						distritosData.features[i].properties.mostrar=false;
+					}
+				}
+		  		for (var row in datos) {
+		  			ponerValorDistritos(datos[row][0],datos[row][1]);
+		  		}
+		  		for (var i=0; i<distritosData.features.length;i++){
+		 			if(distritosData.features[i].properties.GID_1===$('#ouname').val() && distritosData.features[i].properties.cases==null){
+		 				distritosData.features[i].properties.cases=0;
+		 			}
+				}
+		  		dataDatos = distritosData;
+		  		region = $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text;
+			}
+			else if($('#oulevel').val()=="district.samp"){
+				for (var i=0; i<corregimientosData.features.length;i++){
+					corregimientosData.features[i].properties.cases=null;
+					if(corregimientosData.features[i].properties.GID_0===$('#ouname').val()){
+						corregimientosData.features[i].properties.mostrar=true;
+					}
+					else{
+						corregimientosData.features[i].properties.mostrar=false;
+					}
+				}
+				for (var row in datos) {
+		  			ponerValorCorregimientos(datos[row][0],datos[row][1]);
+		  		}
+		  		for (var i=0; i<corregimientosData.features.length;i++){
+		 			if(corregimientosData.features[i].properties.GID_0===$('#ouname').val() && corregimientosData.features[i].properties.cases==null){
+		 				corregimientosData.features[i].properties.cases=0;
+		 			}
+				}
+		  		dataDatos = corregimientosData;
+		  		region = $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text;
+			}
 
-  		info.onAdd = function (mymap) {
-  			this._div = L.DomUtil.create('div', 'info');
-  			this.update();
-  			return this._div;
-  		};
-
-  		info.update = function (props) {
-  			this._div.innerHTML = '<h4>'+parametros.casos+ ' ' + $('#anio').val()+'</h4>' +  (props ?
-  				'<b>' + props.name + '</b><br />' + props.cases 
-  				: '');
-  		};
-  		
-  		info.addTo(mymap);
-  		
-  		var geojson;
-  		
-  		geojson = L.choropleth(provinciasData, {
-  			valueProperty: 'cases',
-  	        scale: ['#0571b0', '#92c5de', '#f4a582', '#ca0020'],
-  	        steps: 4,
-  	        mode: 'q',
-  	        style: {
-  	          color: '#fff',
-  	          weight: 2,
-  	          fillOpacity: 0.7
-  	        },
-  			onEachFeature: onEachFeature
-  		}).addTo(mymap);
-  		
-  		var legend = L.control({position: 'bottomright'});
-
-  		legend.onAdd = function (mymap) {
-
-  			var div = L.DomUtil.create('div', 'info legend');
-  			var limits = geojson.options.limits;
-  			var colors = geojson.options.colors;
-  		    var labels = [];
-  			
-  		    limits.forEach(function (limit, index) {
-  		        if (index === 0) {
-  		            var to = parseFloat(limits[index]).toFixed(0);
-  		            var range_str = "<= " + to;
-  		        }
-  		        else {
-  		            var from = parseFloat(limits[index - 1]).toFixed(0);
-  		            var to = parseFloat(limits[index]).toFixed(0);
-  		            var range_str = "> "+from + "-" + to;
-  		        }
-
-  		        
-  		        labels.push(
-  						'<i style="background:' + colors[index] + '"></i> ' +
-  						range_str);
-  		    })
+			if($('#oulevel').val()=="ALL"||$('#oulevel').val()=="region.samp"||$('#oulevel').val()=="province.samp"||$('#oulevel').val()=="district.samp"){
+		  	 	// control that shows info on hover
+		  		var info = L.control();
+		
+		  		info.onAdd = function (mymap) {
+		  			this._div = L.DomUtil.create('div', 'info');
+		  			this.update();
+		  			return this._div;
+		  		};
+		
+		  		info.update = function (props) {
+		  			if($('#oulevel').val()=="ALL"){
+			  			this._div.innerHTML = '<h4>'+parametros.casos+ ' ' + region + ' ' + $('#anio').val()+'</h4>' +  (props ?
+			  				'<b>' + props.name + '</b><br />' + props.cases 
+			  				: '');
+			  		}
+		  			else if($('#oulevel').val()=="region.samp"){
+		  				this._div.innerHTML = '<h4>'+parametros.casos+ ' ' + region + ' ' + $('#anio').val()+'</h4>' +  (props ?
+				  				'<b>' + props.NAME_2 + '</b><br />' + props.cases 
+				  				: '');
+		  			}
+		  			else if($('#oulevel').val()=="province.samp"){
+		  				this._div.innerHTML = '<h4>'+parametros.casos+ ' ' + region + ' ' + $('#anio').val()+'</h4>' +  (props ?
+				  				'<b>' + props.NAME_2 + '</b><br />' + props.cases 
+				  				: '');
+		  			}
+		  			else if($('#oulevel').val()=="district.samp"){
+		  				this._div.innerHTML = '<h4>'+parametros.casos+ ' ' + region + ' ' + $('#anio').val()+'</h4>' +  (props ?
+				  				'<b>' + props.NAME_3 + '</b><br />' + props.cases 
+				  				: '');
+		  			}
+		  		};
+		  		
+		  		info.addTo(mymap);
+	  		
+		  		var geojson;
+	  		
+		  		geojson = L.choropleth(dataDatos, {
+		  			valueProperty: 'cases',
+		  	        scale: ['#0571b0', '#92c5de', '#f4a582', '#ca0020'],
+		  	        steps: 4,
+		  	        mode: 'q',
+		  	        style: {
+		  	          color: '#fff',
+		  	          weight: 2,
+		  	          fillOpacity: 0.4
+		  	        },
+		  			onEachFeature: onEachFeature,
+		  			filter: function(feature, layer) {
+		  		        return feature.properties.mostrar;
+		  		    }
+		  		}).addTo(mymap);
+		  		
+		  		mymap.fitBounds(geojson.getBounds());
+	  		
+		  		var legend = L.control({position: 'bottomright'});
 	
-	    		div.innerHTML = labels.join('<br>');
-  			return div;
-  		};
-
-  		legend.addTo(mymap);
-  		
-  		function ponerValor(prov,valor) {
-  	 		for (var i=0; i<provinciasData.features.length;i++){
-  	 			if(provinciasData.features[i].properties.id==prov){
-  					provinciasData.features[i].properties.cases=valor;
-  	 			}
-  			}
-  		}
-
-  		
-  		
-  		function highlightFeature(e) {
-  			var layer = e.target;
-
-  			layer.setStyle({
-  				weight: 5,
-  				color: '#666',
-  				dashArray: '',
-  				fillOpacity: 0.7
-  			});
-
-  			if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-  				layer.bringToFront();
-  			}
-
-  			info.update(layer.feature.properties);
-  		}
-  	  	
-
-  		function resetHighlight(e) {
-  			geojson.resetStyle(e.target);
-  			info.update();
-  		}
-
-  		function zoomToFeature(e) {
-  			mymap.fitBounds(e.target.getBounds());
-  		}
-  		
-  		function onEachFeature(feature, layer) {
-  			layer.on({
-  				mouseover: highlightFeature,
-  				mouseout: resetHighlight,
-  				click: zoomToFeature
-  			});
-  		}
+		  		legend.onAdd = function (mymap) {
+	
+		  			var div = L.DomUtil.create('div', 'info legend');
+		  			var limits = geojson.options.limits;
+		  			var colors = geojson.options.colors;
+		  		    var labels = [];
+		  			
+		  		    limits.forEach(function (limit, index) {
+		  		        if (index === 0) {
+		  		            var to = parseFloat(limits[index]).toFixed(0);
+		  		            var range_str = "<= " + to;
+		  		        }
+		  		        else {
+		  		            var from = parseFloat(limits[index - 1]).toFixed(0);
+		  		            var to = parseFloat(limits[index]).toFixed(0);
+		  		            var range_str = "> "+from + "-" + to;
+		  		        }
+		
+		  		        
+		  		        labels.push(
+		  						'<i style="background:' + colors[index] + '"></i> ' +
+		  						range_str);
+		  		    })
+			
+			    		div.innerHTML = labels.join('<br>');
+		  			return div;
+		  		};
+	
+		  		legend.addTo(mymap);
+		  		
+		  		function highlightFeature(e) {
+		  			var layer = e.target;
+		
+		  			layer.setStyle({
+		  				weight: 5,
+		  				color: '#666',
+		  				dashArray: '',
+		  				fillOpacity: 0.7
+		  			});
+		
+		  			if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+		  				layer.bringToFront();
+		  			}
+		
+		  			info.update(layer.feature.properties);
+		  		}
+		  	  	
+		
+		  		function resetHighlight(e) {
+		  			geojson.resetStyle(e.target);
+		  			info.update();
+		  		}
+		
+		  		function zoomToFeature(e) {
+		  			mymap.fitBounds(e.target.getBounds());
+		  		}
+		  		
+		  		function onEachFeature(feature, layer) {
+		  			layer.on({
+		  				mouseover: highlightFeature,
+		  				mouseout: resetHighlight,
+		  				click: function(e){
+    					    clickMap = true;
+    					    if($('#oulevel').val()=="ALL"){
+    					    	$('#oulevel').val("province.samp").change();
+    					    	idArea = e.target.feature.properties.id;
+    					    }
+    					    else if ($('#oulevel').val() == "region.samp"){
+    					    	$('#oulevel').val("district.samp").change();
+    					    	idArea = e.target.feature.properties.VARNAME_2;
+    					    }
+    					    else if ($('#oulevel').val() == "province.samp"){
+    					    	$('#oulevel').val("district.samp").change();
+    					    	idArea = e.target.feature.properties.VARNAME_2;
+    					    }
+    					    else if ($('#oulevel').val() == "district.samp"){
+    					    	$('#oulevel').val("correg.samp").change();
+    					    	idArea = e.target.feature.properties.GID_1;
+    					    }
+    					    else{
+    					    	clickMap = false;
+    					    }
+	    				  }
+		  			});
+		  		}
+			}
+			function ponerValorProvincias(prov,valor) {
+	  	 		for (var i=0; i<provinciasData.features.length;i++){
+	  	 			if(provinciasData.features[i].properties.id==prov){
+	  					provinciasData.features[i].properties.cases=valor;
+	  	 			}
+	  			}
+	  		}
+	  		
+	  		function ponerValorDistritos(distrito,valor) {
+	  	 		for (var i=0; i<distritosData.features.length;i++){
+	  	 			if(distritosData.features[i].properties.VARNAME_2==distrito){
+	  	 				distritosData.features[i].properties.cases=valor;
+	  	 			}
+	  			}
+	  		}
+	  		function ponerValorCorregimientos(corregimiento,valor) {
+	  	 		for (var i=0; i<corregimientosData.features.length;i++){
+	  	 			if(corregimientosData.features[i].properties.GID_1==corregimiento){
+	  	 				corregimientosData.features[i].properties.cases=valor;
+	  	 			}
+	  			}
+	  		}
+	  		
+			$('#map-element').unblock();
   	});
   }
   

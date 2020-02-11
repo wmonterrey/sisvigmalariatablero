@@ -5,6 +5,10 @@
 <html class="default-style">
 <head>
   <jsp:include page="../fragments/headTag.jsp" />
+  <spring:url value="/resources/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.css" var="bsdpcss" />
+  <link rel="stylesheet" href="${bsdpcss}">
+  <spring:url value="/resources/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.css" var="bsdrpcss" />
+  <link rel="stylesheet" href="${bsdrpcss}">
 </head>
 <body>
 	<div class="page-loader">
@@ -39,18 +43,32 @@
 			                  <div class="card mb-4">
 									<div class="card-body">
 										<form id="filters-form">
+											<div class="form-row">
+												<div class="form-group col-md-1">
+														<button id="daterange-mc" type="button" class="btn btn-default dropdown-toggle md-btn-flat"></button>
+												</div>
+												<div class="form-group col-md-2">
+						                    	<div class="select2-primary">
+						                  			<select id="anio" name="anio" class="select2-filtro form-control" style="width: 100%">
+						                    			<c:forEach items="${anios}" var="anio">
+								                    		<option value="${anio}"><spring:message code="${anio}" /></option>
+														</c:forEach>
+						                  			</select>
+						               			</div>
+						                    </div>
+											</div>
 											
 											<div class="form-row">
 												<div class="form-group col-md-12">
 													<div class="form-row">
-														<div class="form-group col-md-1.5">
+														<div class="form-group col-md-2">
 															<label id="labelFechaInicio" class="form-label"></label>
 															<input type="hidden" id="fechaInicio" name="fechaInicio" class="form-control"></input>
 														</div>
-														<div class="form-group col-md-10">
+														<div class="form-group col-md-8">
 															<div id="slider-date"></div>
 														</div>
-														<div class="form-group col-md-1.5">
+														<div class="form-group col-md-2">
 															<label id="labelFechaFin" class="form-label col-sm-12 text-right"></label>
 															<input type="hidden" id="fechaFin" name="fechaFin" class="form-control"></input>
 														</div>
@@ -69,6 +87,7 @@
 						                  				<option value="district.samp"><spring:message code="district.samp" /></option>
 						                  				<option value="correg.samp"><spring:message code="correg.samp" /></option>
 						                  				<option value="local.samp"><spring:message code="local.samp" /></option>
+						                  				<option value="foci.samp"><spring:message code="foci.samp" /></option>
 						                  			</select>
 						               			</div>
 						                    </div>
@@ -191,6 +210,26 @@
   	
   	<spring:url value="/resources/vendor/libs/chartjs/chartjs-plugin-labels.js" var="ChartJSLabels" />
     <script src="${ChartJSLabels}" type="text/javascript"></script>
+    
+    <spring:url value="/resources/vendor/libs/moment/moment-with-locales.js" var="momment" />
+    <script src="${momment}" type="text/javascript"></script>
+    
+    <spring:url value="/resources/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.js" var="bsdp" />
+    <script src="${bsdp}" type="text/javascript"></script>
+    
+    <spring:url value="/resources/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.js" var="bsdrp" />
+    <script src="${bsdrp}" type="text/javascript"></script>
+    
+    <spring:url value="/resources/vendor/libs/bootstrap-daterangepicker/bdrp_{language}.js" var="bdrpLang">
+  		<spring:param name="language" value="${lenguaje}" />
+  	</spring:url>
+  	<script src="${bdrpLang}"></script>
+  	
+  	<spring:url value="/resources/vendor/libs/bootstrap-daterangepicker/ranges_{language}.js" var="rangesLang">
+  		<spring:param name="language" value="${lenguaje}" />
+  	</spring:url>
+  	<script src="${rangesLang}"></script>
+    
   	
   	
   	<!-- Urls -->
@@ -207,6 +246,7 @@
   	<spring:url value="/api/provincias" var="opcProvUrl"/>
   	<spring:url value="/api/distritos" var="opcDistUrl"/>
   	<spring:url value="/api/corregimientos" var="opcCorregUrl"/>
+  	<spring:url value="/api/focos" var="opcFocosUrl"/>
   	<spring:url value="/api/localidades/" var="localidadesUrl"/>
   	
  	<!-- Mensajes -->
@@ -218,12 +258,21 @@
   	<c:set var="clas"><spring:message code="clas" /></c:set>
   	<c:set var="cpdr"><spring:message code="cpdr" /></c:set>
   	<c:set var="ourequerida"><spring:message code="ou.required" /></c:set>
+  	<c:set var="lastYear"><spring:message code="lastYear" /></c:set>
+  	<c:set var="thisYear"><spring:message code="thisYear" /></c:set>
+  	<c:set var="today"><spring:message code="today" /></c:set>
+  	<c:set var="yesterday"><spring:message code="yesterday" /></c:set>
+  	<c:set var="t7day"><spring:message code="7day" /></c:set>
+  	<c:set var="t30day"><spring:message code="30day" /></c:set>
+  	<c:set var="lastMonth"><spring:message code="lastMonth" /></c:set>
+  	<c:set var="thisMonth"><spring:message code="thisMonth" /></c:set>
 
 	<script>
 		jQuery(document).ready(function() {
 			var parametros = {viajesUrl: "${viajesUrl}",clasUrl: "${clasUrl}",cpdrUrl: "${cpdrUrl}",opcRegUrl: "${opcRegUrl}",localidadesUrl: "${localidadesUrl}",
-					 ourequerida: "${ourequerida}",opcProvUrl: "${opcProvUrl}",opcDistUrl: "${opcDistUrl}",opcCorregUrl: "${opcCorregUrl}",
-					seleccionar: "${seleccionar}",travel: "${travel}",yes: "${yes}",no: "${no}",clas: "${clas}",cpdr: "${cpdr}"};
+					 ourequerida: "${ourequerida}",lenguaje: "${lenguaje}",opcProvUrl: "${opcProvUrl}",opcDistUrl: "${opcDistUrl}",opcCorregUrl: "${opcCorregUrl}",opcFocosUrl: "${opcFocosUrl}",
+					seleccionar: "${seleccionar}",travel: "${travel}",yes: "${yes}",no: "${no}",clas: "${clas}",cpdr: "${cpdr}"
+					,lastYear: "${lastYear}",thisYear: "${thisYear}",today: "${today}",yesterday: "${yesterday}",t7day: "${t7day}",t30day: "${t30day}",lastMonth: "${lastMonth}",thisMonth: "${thisMonth}"};
 			ProcessDashboardVig.init(parametros);
 			
 			if ($('html').attr('dir') === 'rtl') {

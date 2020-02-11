@@ -7,7 +7,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -130,11 +129,9 @@ public class FocosController {
 	public ResponseEntity<String> processEntity( @RequestParam(value="ident", required=false, defaultValue="" ) String ident
 	        , @RequestParam( value="code", required=true ) String code
 	        , @RequestParam( value="name", required=true ) String name
-	        , @RequestParam( value="localidades", required=false, defaultValue="") List<Integer> localidades
 	        )
 	{
     	try{
-    		WebAuthenticationDetails wad  = (WebAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
 			Foco foco = new Foco();
 			//Si el ident viene en blanco es nuevo
 			if (ident.equals("")){
@@ -156,27 +153,6 @@ public class FocosController {
 				foco.setName(name);
 				//Actualiza
 				this.focoService.saveFoco(foco);
-			}
-			List<Localidad> localidadesSeleccionadas = focoService.getLocalidadesFoco(foco.getIdent());
-			for(Localidad l:localidadesSeleccionadas) {
-				if(!localidades.contains(l.getIdent())) {
-					FocoLocalidad floc = focoService.getFocoLocalidad(foco.getIdent(), l.getIdent());
-					floc.setPasive('1');
-					this.focoService.saveFocoLocalidad(floc);
-				}
-			}
-			for(Integer l:localidades){
-				FocoLocalidad floc = focoService.getFocoLocalidad(foco.getIdent(), l);
-				if(floc==null) {
-					floc = new FocoLocalidad();
-					floc.setFocoLocalidadId(new FocoLocalidadId(foco.getIdent(), l));
-					floc.setRecordUser(SecurityContextHolder.getContext().getAuthentication().getName());
-					floc.setRecordDate(new Date());
-					floc.setDeviceid(wad.getRemoteAddress());
-				}else {
-					floc.setPasive('0');
-				}
-				this.focoService.saveFocoLocalidad(floc);
 			}
 			return createJsonResponse(foco);
     	}
@@ -241,6 +217,71 @@ public class FocosController {
     	}
     	else{
     		redirecTo = "403";
+    	}
+    	return redirecTo;	
+    }
+    
+    
+    /**
+     * Custom handler for disabling a locality.
+     *
+     * @param ident the ID to disable
+     * @param redirectAttributes 
+     * @return a String
+     */
+    @RequestMapping("/disableLoc/{ident}/{locality}/")
+    public String disableLocalidad(@PathVariable("ident") String ident, 
+    		@PathVariable("locality") Integer locality,
+    		RedirectAttributes redirectAttributes) {
+    	String redirecTo="404";
+		
+		FocoLocalidad floc = focoService.getFocoLocalidad(ident, locality);
+    	if(floc!=null){
+    		floc.setPasive('1');
+    		this.focoService.saveFocoLocalidad(floc);
+    		redirectAttributes.addFlashAttribute("entidadDeshabilitada", true);
+    		redirectAttributes.addFlashAttribute("nombreEntidad", floc.getLocalidad().getName());
+    		redirecTo = "redirect:/foci/"+ident+"/";
+    	}
+    	else{
+    		redirecTo = "403";
+    	}
+    	return redirecTo;	
+    }
+    
+    /**
+     * Custom handler for adding a locality.
+     *
+     * @param ident the ID to disable
+     * @param redirectAttributes 
+     * @return a String
+     */
+    @RequestMapping("/addLocalidad/{ident}/{locality}/")
+    public String agregarLocalidad(@PathVariable("ident") String ident, 
+    		@PathVariable("locality") Integer locality,
+    		RedirectAttributes redirectAttributes) {
+    	String redirecTo="404";
+		
+		FocoLocalidad floc = focoService.getFocoLocalidad(ident, locality);
+    	if(floc!=null){
+    		floc.setPasive('0');
+    		this.focoService.saveFocoLocalidad(floc);
+    		redirectAttributes.addFlashAttribute("entidadHabilitada", true);
+    		redirectAttributes.addFlashAttribute("nombreEntidad", floc.getLocalidad().getName());
+    		redirecTo = "redirect:/foci/"+ident+"/";
+    	}
+    	else{
+    		Localidad loc = this.ouService.getLocalidad(locality);
+    		if(loc!=null) {
+    			floc = new FocoLocalidad(new FocoLocalidadId(ident,locality),new Date(),SecurityContextHolder.getContext().getAuthentication().getName());
+    			this.focoService.saveFocoLocalidad(floc);
+    			redirectAttributes.addFlashAttribute("entidadHabilitada", true);
+        		redirectAttributes.addFlashAttribute("nombreEntidad", loc.getName());
+    			redirecTo = "redirect:/foci/"+ident+"/";
+    		}
+    		else {
+    			redirecTo = "403";
+    		}
     	}
     	return redirecTo;	
     }

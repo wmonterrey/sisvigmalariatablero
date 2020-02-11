@@ -17,6 +17,135 @@ return {
     })
   });
   
+  $('#anio').change(
+	function() {
+		var thisYear = $('#anio').val();    
+		var startDate =moment(new Date("1/1/" + thisYear));
+		var endDate = moment(new Date("12/31/" + thisYear));
+		var today = moment();
+		  
+		endDate > today ? endDate = today: endDate=endDate;
+		
+		dateSlider.noUiSlider.updateOptions({
+		    range: {
+		    	min: timestamp(startDate),
+		        max: timestamp(endDate)
+		    },
+		    start: [timestamp(startDate), timestamp(endDate)],
+		},false);
+		$("#actualizar").click();
+
+  });
+		  
+	  
+  var isRtl = $('html').attr('dir') === 'rtl';
+  
+  var dateSlider = document.getElementById('slider-date');
+  var firstDate = new Date("12/15/2017");
+  
+  var thisYear = $('#anio').val();    
+  var startDate =moment(new Date("1/1/" + thisYear));
+  var endDate = moment(new Date("12/31/" + thisYear));
+  
+  var today = moment();
+  
+  endDate > today ? endDate = today: endDate=endDate;
+  
+  moment.locale(parametros.lenguaje);
+  
+  //Create a new date from a string, return as a timestamp.
+  function timestamp(str) {
+      return new Date(str).getTime();
+  }
+
+  noUiSlider.create(dateSlider, {
+	  // Create two timestamps to define a range.
+  range: {
+      min: timestamp(startDate),
+      max: timestamp(endDate)
+  },
+
+  // Steps of one day
+  step: 24 * 60 * 60 * 1000,
+  direction: isRtl ? 'rtl' : 'ltr',
+
+  // Two more timestamps indicate the handle starting positions.
+  
+  start: [timestamp(startDate), timestamp(endDate)],
+
+  connect: true,
+  behaviour: 'tap',
+  pips: {
+	  mode: 'positions',
+	      values: [],
+	      stepped: true,
+	      density: 2,
+	      format: wNumb({
+	            decimals: 0
+	        })
+	    }
+  });
+  
+  var inputStart = document.getElementById('fechaInicio');
+  var labelStart = document.getElementById('labelFechaInicio');
+  var inputEnd = document.getElementById('fechaFin');
+  var labelEnd = document.getElementById('labelFechaFin');
+
+  dateSlider.noUiSlider.on('update', function (values, handle) {
+	inputStart.value = formatDate(new Date(+values[0]));
+	labelStart.innerHTML = formatDate(new Date(+values[0]));
+	inputEnd.value = formatDate(new Date(+values[1]));
+	labelEnd.innerHTML = formatDate(new Date(+values[1]));
+  });
+
+  dateSlider.noUiSlider.on('set', function () {
+	  $("#actualizar").click();
+  });
+
+
+  // Create a string representation of the date.
+  function formatDate(date) {
+	 var yyyy = date.getFullYear().toString();                                    
+     var mm = (date.getMonth()+1).toString(); // getMonth() is zero-based         
+     var dd  = date.getDate().toString();             
+     return yyyy + '-' + (mm[1]?mm:"0"+mm[0]) + '-' + (dd[1]?dd:"0"+dd[0]);
+  }
+
+  function cb(startDate, endDate) {
+    //$('#daterange-mc').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+	  // Set the value, creating a new option if necessary
+	  if ($('#anio').find("option[value='" + startDate.year().toString() + "']").length) {
+	      $('#anio').val(startDate.year().toString()).trigger('change.select2');
+	  } else { 
+	      // Create a DOM Option and pre-select by default
+	      var newOption = new Option(startDate.year().toString(), startDate.year().toString(), true, true);
+	      // Append it to the select
+	      $('#anio').append(newOption).trigger('change.select2');
+	  }
+	  
+	  dateSlider.noUiSlider.updateOptions({
+		    range: {
+		    	min: timestamp(startDate),
+		        max: timestamp(endDate)
+		    },
+		    start: [timestamp(startDate), timestamp(endDate)],
+		},false);
+	  $("#actualizar").click();
+  }
+
+  $('#daterange-mc').daterangepicker({
+    startDate: startDate,
+    endDate: endDate,
+    minDate:firstDate,
+    maxDate:moment(),
+    locale:bdrp,
+    ranges: rangeLocale,
+   opens: (isRtl ? 'left' : 'right')
+  }, cb);
+
+  cb(startDate, endDate);
+  
+
  $('#divouname').hide();
   
   $('#oulevel').change(
@@ -101,6 +230,25 @@ return {
     				$('#ouname').html(html);
     			});
   			}
+  			else if ($('#oulevel option:selected').val() == "foci.samp"){
+  				$("#ouname").wrap('<div class="position-relative"></div>')
+  		        .select2({
+  		          placeholder: parametros.seleccionar,
+  		          dropdownParent: $(this).parent(),
+  		          language:parametros.lenguaje
+  		        });
+  				$('#divouname').show();
+  				$.getJSON(parametros.opcFocosUrl, {
+    				ajax : 'true'
+    			}, function(data) {
+    				var html;
+    				var len = data.length;
+    				for ( var i = 0; i < len; i++) {
+    					html += '<option value="' + data[i].ident + '">'+ data[i].name  +'</option>';
+    				}
+    				$('#ouname').html(html);
+    			});
+  			}
   			else if($('#oulevel option:selected').val() == "local.samp"){
   				$('#divouname').show();
   				$("#ouname").wrap('<div class="position-relative"></div>').select2({
@@ -155,73 +303,6 @@ return {
   					}
   			}
           });
-  
-
-	  
-	  //Create a new date from a string, return as a timestamp.
-	  function timestamp(str) {
-	      return new Date(str).getTime();
-	  }
-	  
-	  
-	  var dateSlider = document.getElementById('slider-date');
-	  var firstDay = new Date().getFullYear().toString();
-	  var isRtl = $('body').attr('dir') === 'rtl' || $('html').attr('dir') === 'rtl';
-
-	  noUiSlider.create(dateSlider, {
-		  // Create two timestamps to define a range.
-	      range: {
-	          min: timestamp('2018-01-01'),
-	          max: timestamp(new Date())
-	      },
-
-	      // Steps of one day
-	      step: 24 * 60 * 60 * 1000,
-	      direction: isRtl ? 'rtl' : 'ltr',
-
-	      // Two more timestamps indicate the handle starting positions.
-	      
-	      start: [timestamp(firstDay), timestamp(new Date())],
-
-	      connect: true,
-		  behaviour: 'tap',
-		  pips: {
-			  mode: 'positions',
-		      values: [],
-		      stepped: true,
-		      density: 2,
-		      format: wNumb({
-		            decimals: 0
-		        })
-		    }
-	  });
-	  
-	  var inputStart = document.getElementById('fechaInicio');
-	  var labelStart = document.getElementById('labelFechaInicio');
-	  var inputEnd = document.getElementById('fechaFin');
-	  var labelEnd = document.getElementById('labelFechaFin');
-
-		dateSlider.noUiSlider.on('update', function (values, handle) {
-			inputStart.value = formatDate(new Date(+values[0]));
-			labelStart.innerHTML = formatDate(new Date(+values[0]));
-			inputEnd.value = formatDate(new Date(+values[1]));
-			labelEnd.innerHTML = formatDate(new Date(+values[1]));
-		});
-		
-		dateSlider.noUiSlider.on('set', function () {
-			$("#actualizar").click();
-		});
-
-
-		// Create a string representation of the date.
-		function formatDate(date) {
-			 var yyyy = date.getFullYear().toString();                                    
-		     var mm = (date.getMonth()+1).toString(); // getMonth() is zero-based         
-		     var dd  = date.getDate().toString();             
-		     return yyyy + '-' + (mm[1]?mm:"0"+mm[0]) + '-' + (dd[1]?dd:"0"+dd[0]);
-		}
-		
-  
     
   $("#actualizar").on("click", function(evt) {
 	  evt.preventDefault();

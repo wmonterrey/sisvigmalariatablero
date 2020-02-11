@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,12 +26,16 @@ public class DashboardManejoController {
 	@Resource(name="dashboardManejoService")
 	private DashboardManejoService dashboardManejoService;
 	
+	private static final Logger logger = LoggerFactory.getLogger(DashboardManejoController.class);
+	
     
     @RequestMapping(value = "/trat/", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody List<Object[]> obtenerDatosTratamientos(@RequestParam(value = "fechaInicio", required = true) String fechaInicio
     		,@RequestParam(value = "fechaFin", required = true) String fechaFin
     		,@RequestParam(value = "oulevel", required = true) String oulevel
     		,@RequestParam(value = "ouname", required = false, defaultValue="") String ouname) throws ParseException {
+    	
+    	logger.info("Obteniendo casos confirmados por periodo");
         
     	Long desde = null;
         Long hasta = null;

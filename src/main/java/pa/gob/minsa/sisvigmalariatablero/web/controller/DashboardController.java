@@ -49,6 +49,8 @@ public class DashboardController {
     @RequestMapping(value = "/vig/", method = RequestMethod.GET)
 	public String showSurveillanceDashboard(Model model) {
     	logger.info("showing Surveillance Dashboard...");
+    	List<Integer> anios = this.dashboardPortadaService.getAniosDB();
+    	model.addAttribute("anios", anios);
     	return "dashboards/vig";
 	}
     
@@ -60,6 +62,8 @@ public class DashboardController {
     @RequestMapping(value = "/casemgm/", method = RequestMethod.GET)
 	public String showCaseManagementDashboard(Model model) {
     	logger.info("showing Cases Dashboard...");
+    	List<Integer> anios = this.dashboardPortadaService.getAniosDB();
+    	model.addAttribute("anios", anios);
     	return "dashboards/casemgm";
 	}
 	

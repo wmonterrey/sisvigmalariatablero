@@ -28,26 +28,26 @@
 	}
 	.legendCircle1 {
 		border-radius:50%; 
-		border: 1px solid #537898; 
-	 	background: rgba(113, 133, 152, .6);
+		border: 1px solid #245277; 
+	 	background: rgba(55, 126, 184, .3);
 		display: inline-block;
 	}
 	.legendCircle2 {
 		border-radius:50%; 
-		border: 1px solid #537898; 
-	 	background: rgba(5, 113, 176, .6);
+		border: 1px solid #2f6a2d; 
+	 	background: rgba(77, 175, 74, .3);
 		display: inline-block;
 	}
 	.legendCircle3 {
 		border-radius:50%; 
-		border: 1px solid #537898; 
-	 	background: rgba(146, 197, 222, .6);
+		border: 1px solid #5a2e60; 
+	 	background: rgba(152, 78, 163, .3);
 		display: inline-block;
 	}
 	.legendCircle4 {
 		border-radius:50%; 
-		border: 1px solid #537898; 
-	 	background: rgba(244, 165, 130, .6);
+		border: 1px solid #a75300; 
+	 	background: rgba(255, 127, 0, .3);
 		display: inline-block;
 	}
 	.legendValue {
@@ -55,6 +55,10 @@
 		right: 8px;
 	}
    </style>
+   <spring:url value="/resources/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.css" var="bsdpcss" />
+   <link rel="stylesheet" href="${bsdpcss}">
+   <spring:url value="/resources/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.css" var="bsdrpcss" />
+   <link rel="stylesheet" href="${bsdrpcss}">
 </head>
 <body>
 	<div class="page-loader">
@@ -84,7 +88,54 @@
 			            </h4>
 			            
 			            
-			            
+			            <!-- Filtros -->
+			            <div class="row">
+			              <div class="col-sm-12 col-md-12 col-xl-12">
+			                <div class="card mb-4">
+			                  <div class="card mb-4">
+									<div class="card-body">
+										<form id="filters-form">
+											
+											<div class="form-row">
+												<div class="form-group col-md-1">
+														<button id="daterange-mc" type="button" class="btn btn-default dropdown-toggle md-btn-flat"></button>
+												</div>
+												<div class="form-group col-md-2">
+						                    	<div class="select2-primary">
+						                  			<select id="anio" name="anio" class="select2-filtro form-control" style="width: 100%">
+						                    			<c:forEach items="${anios}" var="anio">
+								                    		<option value="${anio}"><spring:message code="${anio}" /></option>
+														</c:forEach>
+						                  			</select>
+						               			</div>
+						                    </div>
+											</div>
+											
+											<div class="form-row">
+												<div class="form-group col-md-12">
+													<div class="form-row">
+														<div class="form-group col-md-2">
+															<label id="labelFechaInicio" class="form-label"></label>
+															<input type="hidden" id="fechaInicio" name="fechaInicio" class="form-control"></input>
+														</div>
+														<div class="form-group col-md-8">
+															<div id="slider-date"></div>
+														</div>
+														<div class="form-group col-md-2">
+															<label id="labelFechaFin" class="form-label col-sm-12 text-right"></label>
+															<input type="hidden" id="fechaFin" name="fechaFin" class="form-control"></input>
+														</div>
+													</div>
+												</div>
+											</div>
+											
+										</form>
+									</div>
+								</div>
+			                </div>
+			
+			              </div>
+			            </div>
 			            
 			            <div class="card mb-4" id="map-element">
 			              <h6 class="card-header with-elements">
@@ -100,39 +151,7 @@
 			              </div>
 			            </div>
 			            
-			            <!-- Filtros -->
-			            <div class="row">
-			              <div class="col-sm-12 col-md-12 col-xl-12">
-			                <div class="card mb-4">
-			                  <div class="card mb-4">
-									<div class="card-body">
-										<form id="filters-form">
-											
-											<div class="form-row">
-												<div class="form-group col-md-12">
-													<div class="form-row">
-														<div class="form-group col-md-1.5">
-															<label id="labelFechaInicio" class="form-label"></label>
-															<input type="hidden" id="fechaInicio" name="fechaInicio" class="form-control"></input>
-														</div>
-														<div class="form-group col-md-10">
-															<div id="slider-date"></div>
-														</div>
-														<div class="form-group col-md-1.5">
-															<label id="labelFechaFin" class="form-label col-sm-12 text-right"></label>
-															<input type="hidden" id="fechaFin" name="fechaFin" class="form-control"></input>
-														</div>
-													</div>
-												</div>
-											</div>
-											
-										</form>
-									</div>
-								</div>
-			                </div>
-			
-			              </div>
-			            </div>
+			            
 			            
          			</div>
          			<!-- / Content -->
@@ -149,8 +168,37 @@
   	<jsp:include page="../fragments/corePlugins.jsp" />
   	<jsp:include page="../fragments/bodyUtils.jsp" />
   	
+  	<!-- Lenguaje -->
+	<c:choose>
+	<c:when test="${cookie.esisvigLang.value == null}">
+		<c:set var="lenguaje" value="es"/>
+	</c:when>
+	<c:otherwise>
+		<c:set var="lenguaje" value="${cookie.esisvigLang.value}"/>
+	</c:otherwise>
+	</c:choose>
+  	
   	<spring:url value="/resources/vendor/libs/leaflet/leaflet.js" var="leafletJS" />
     <script src="${leafletJS}" type="text/javascript"></script>
+    
+    <spring:url value="/resources/vendor/libs/moment/moment-with-locales.js" var="momment" />
+    <script src="${momment}" type="text/javascript"></script>
+    
+    <spring:url value="/resources/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.js" var="bsdp" />
+    <script src="${bsdp}" type="text/javascript"></script>
+    
+    <spring:url value="/resources/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.js" var="bsdrp" />
+    <script src="${bsdrp}" type="text/javascript"></script>
+    
+    <spring:url value="/resources/vendor/libs/bootstrap-daterangepicker/bdrp_{language}.js" var="bdrpLang">
+  		<spring:param name="language" value="${lenguaje}" />
+  	</spring:url>
+  	<script src="${bdrpLang}"></script>
+  	
+  	<spring:url value="/resources/vendor/libs/bootstrap-daterangepicker/ranges_{language}.js" var="rangesLang">
+  		<spring:param name="language" value="${lenguaje}" />
+  	</spring:url>
+  	<script src="${rangesLang}"></script>
     
    
     <spring:url value="/resources/maps/regionescentros.geojson" var="RegionesPanama" />

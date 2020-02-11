@@ -54,13 +54,14 @@
 						                  				<option value="district.samp"><spring:message code="district.samp" /></option>
 						                  				<option value="correg.samp"><spring:message code="correg.samp" /></option>
 						                  				<option value="local.samp"><spring:message code="local.samp" /></option>
+						                  				<option value="foci.samp"><spring:message code="foci.samp" /></option>
 						                  			</select>
 						               			</div>
 						                    </div>
 						                    <div id="divouname" class="form-group col-md-4">
 						                    	<label class="form-label">&nbsp;</label>
 						                    	<div class="select2-primary">
-						                  			<select id="ouname" name="ouname" class="select2-filtro form-control" style="width: 100%">s
+						                  			<select id="ouname" name="ouname" class="select2-filtro form-control" style="width: 100%">
 						                  			</select>
 						               			</div>
 						                    </div>
@@ -374,6 +375,7 @@
   	<spring:url value="/api/provincias" var="opcProvUrl"/>
   	<spring:url value="/api/distritos" var="opcDistUrl"/>
   	<spring:url value="/api/corregimientos" var="opcCorregUrl"/>
+  	<spring:url value="/api/focos" var="opcFocosUrl"/>
   	<spring:url value="/api/localidades/" var="localidadesUrl"/>
   	
   	<!-- Mensajes -->
@@ -393,7 +395,7 @@
 		jQuery(document).ready(function() {
 			var parametros = {casosUrl: "${casosUrl}", muestrasUrl: "${muestrasUrl}", regionesUrl: "${regionesUrl}", locbusqUrl: "${locbusqUrl}",lenguaje: "${lenguaje}",dataTablesLang: "${dataTablesLang}",
 					casos: "${casos}", muestras: "${muestras}",seleccionar: "${seleccionar}",opcRegUrl: "${opcRegUrl}",localidadesUrl: "${localidadesUrl}"
-						, ourequerida: "${ourequerida}",opcProvUrl: "${opcProvUrl}",opcDistUrl: "${opcDistUrl}",opcCorregUrl: "${opcCorregUrl}",total: "${total}"
+						, ourequerida: "${ourequerida}",opcProvUrl: "${opcProvUrl}",opcDistUrl: "${opcDistUrl}",opcCorregUrl: "${opcCorregUrl}",opcFocosUrl: "${opcFocosUrl}",total: "${total}"
 							,region: "${region}",distrito: "${distrito}",corregimiento: "${corregimiento}",localidad: "${localidad}"};
 			ProcessDashboardPortada.init(parametros);
 			

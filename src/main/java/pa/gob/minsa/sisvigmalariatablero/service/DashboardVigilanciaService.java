@@ -29,7 +29,7 @@ public class DashboardVigilanciaService {
 	
 	
 	/**
-	 * Regresa datos de casos confirmados por período
+	 * Regresa datos de casos confirmados por perï¿½odo
 	 * 
 	 * @return lista de objetos
 	 */
@@ -44,7 +44,7 @@ public class DashboardVigilanciaService {
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por región
+		//Por regiï¿½n
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and sisvigdb.cat_distrito.id_region =:ouname ";
 		}
@@ -64,6 +64,10 @@ public class DashboardVigilanciaService {
 		else if(oulevel.equals("local.samp")) {
 			sqlQueryRegionWhere = " and sisvigdb.malaria_casos.pdr_muestra_id_localidad =:ouname ";
 		}
+		//Por foco
+		else if(oulevel.equals("foci.samp")) {
+			sqlQueryRegionWhere = " and sisvigdb.malaria_casos.pdr_muestra_id_localidad IN (SELECT sisvig_tablero.focilocalities.locality FROM sisvig_tablero.focilocalities WHERE sisvig_tablero.focilocalities.foco =:ouname AND sisvig_tablero.focilocalities.pasive='0') ";
+		}		
 		
 		Query query = session.createSQLQuery("SELECT sisvigdb.malaria_investigaciones.viaje_30d as hist, Count(malaria_casos.id) AS total " + 
 				"FROM sisvigdb.semana_epi, (sisvigdb.malaria_casos LEFT JOIN sisvigdb.malaria_investigaciones ON sisvigdb.malaria_casos.id = sisvigdb.malaria_investigaciones.id_caso) "
@@ -82,32 +86,36 @@ public class DashboardVigilanciaService {
 			query.setTimestamp("fechaInicio", timeStampInicio);
 			query.setTimestamp("fechaFinal", timeStampFinal);
 		}
-		//Parámetro región
+		//Parï¿½metro regiï¿½n
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro provincia
+		//Parï¿½metro provincia
 		else if(oulevel.equals("province.samp")) {	
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro distrito
+		//Parï¿½metro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro corregimiento
+		//Parï¿½metro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro localidad
+		//Parï¿½metro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
+		//ParÃ¡metro foco
+		else if(oulevel.equals("foci.samp")) {
+			query.setParameter("ouname", ouname);
+		}			
 		return query.list();
 	}
 	
 	
 	/**
-	 * Regresa datos de casos confirmados por período
+	 * Regresa datos de casos confirmados por perï¿½odo
 	 * 
 	 * @return lista de objetos
 	 */
@@ -122,7 +130,7 @@ public class DashboardVigilanciaService {
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por región
+		//Por regiï¿½n
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and sisvigdb.cat_distrito.id_region =:ouname ";
 		}
@@ -142,6 +150,10 @@ public class DashboardVigilanciaService {
 		else if(oulevel.equals("local.samp")) {
 			sqlQueryRegionWhere = " and sisvigdb.malaria_casos.pdr_muestra_id_localidad =:ouname ";
 		}
+		//Por foco
+		else if(oulevel.equals("foci.samp")) {
+			sqlQueryRegionWhere = " and sisvigdb.malaria_casos.pdr_muestra_id_localidad IN (SELECT sisvig_tablero.focilocalities.locality FROM sisvig_tablero.focilocalities WHERE sisvig_tablero.focilocalities.foco =:ouname AND sisvig_tablero.focilocalities.pasive='0') ";
+		}	
 		
 		Query query = session.createSQLQuery("SELECT If(ISNULL(tipo_caso) Or ISNULL(origen_infeccion),0,1) AS clas, Count(malaria_casos.id) AS total " + 
 				"FROM sisvigdb.semana_epi, (sisvigdb.malaria_casos LEFT JOIN sisvigdb.malaria_investigaciones ON sisvigdb.malaria_casos.id = sisvigdb.malaria_investigaciones.id_caso) "
@@ -160,32 +172,36 @@ public class DashboardVigilanciaService {
 			query.setTimestamp("fechaInicio", timeStampInicio);
 			query.setTimestamp("fechaFinal", timeStampFinal);
 		}
-		//Parámetro región
+		//Parï¿½metro regiï¿½n
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro provincia
+		//Parï¿½metro provincia
 		else if(oulevel.equals("province.samp")) {	
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro distrito
+		//Parï¿½metro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro corregimiento
+		//Parï¿½metro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro localidad
+		//Parï¿½metro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
+		//ParÃ¡metro foco
+		else if(oulevel.equals("foci.samp")) {
+			query.setParameter("ouname", ouname);
+		}		
 		return query.list();
 	}
 	
 	
 	/**
-	 * Regresa datos de casos confirmados por período
+	 * Regresa datos de casos confirmados por perï¿½odo
 	 * 
 	 * @return lista de objetos
 	 */
@@ -200,7 +216,7 @@ public class DashboardVigilanciaService {
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por región
+		//Por regiï¿½n
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and sisvigdb.cat_distrito.id_region =:ouname ";
 		}
@@ -220,6 +236,10 @@ public class DashboardVigilanciaService {
 		else if(oulevel.equals("local.samp")) {
 			sqlQueryRegionWhere = " and sisvigdb.malaria_casos.pdr_muestra_id_localidad =:ouname ";
 		}
+		//Por foco
+		else if(oulevel.equals("foci.samp")) {
+			sqlQueryRegionWhere = " and sisvigdb.malaria_casos.pdr_muestra_id_localidad IN (SELECT sisvig_tablero.focilocalities.locality FROM sisvig_tablero.focilocalities WHERE sisvig_tablero.focilocalities.foco =:ouname AND sisvig_tablero.focilocalities.pasive='0') ";
+		}		
 		
 		Query query = session.createSQLQuery("SELECT malaria_casos.lab_resultado AS conf, Count(malaria_casos.id) AS total " + 
 				"FROM sisvigdb.semana_epi, (sisvigdb.malaria_casos LEFT JOIN sisvigdb.malaria_investigaciones ON sisvigdb.malaria_casos.id = sisvigdb.malaria_investigaciones.id_caso) "
@@ -238,26 +258,30 @@ public class DashboardVigilanciaService {
 			query.setTimestamp("fechaInicio", timeStampInicio);
 			query.setTimestamp("fechaFinal", timeStampFinal);
 		}
-		//Parámetro región
+		//Parï¿½metro regiï¿½n
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro provincia
+		//Parï¿½metro provincia
 		else if(oulevel.equals("province.samp")) {	
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro distrito
+		//Parï¿½metro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro corregimiento
+		//Parï¿½metro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro localidad
+		//Parï¿½metro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
+		//ParÃ¡metro foco
+		else if(oulevel.equals("foci.samp")) {
+			query.setParameter("ouname", ouname);
+		}			
 		return query.list();
 	}
 	
