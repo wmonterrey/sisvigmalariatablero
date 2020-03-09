@@ -29,7 +29,7 @@ public class DashboardVigilanciaService {
 	
 	
 	/**
-	 * Regresa datos de casos confirmados por per�odo
+	 * Regresa datos de casos confirmados por periodo
 	 * 
 	 * @return lista de objetos
 	 */
@@ -44,7 +44,7 @@ public class DashboardVigilanciaService {
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por regi�n
+		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and sisvigdb.cat_distrito.id_region =:ouname ";
 		}
@@ -86,23 +86,23 @@ public class DashboardVigilanciaService {
 			query.setTimestamp("fechaInicio", timeStampInicio);
 			query.setTimestamp("fechaFinal", timeStampFinal);
 		}
-		//Par�metro regi�n
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {	
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro corregimiento
+		//Parametro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro localidad
+		//Parametro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
@@ -115,7 +115,7 @@ public class DashboardVigilanciaService {
 	
 	
 	/**
-	 * Regresa datos de casos confirmados por per�odo
+	 * Regresa datos de casos confirmados por periodo
 	 * 
 	 * @return lista de objetos
 	 */
@@ -130,7 +130,7 @@ public class DashboardVigilanciaService {
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por regi�n
+		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and sisvigdb.cat_distrito.id_region =:ouname ";
 		}
@@ -172,23 +172,23 @@ public class DashboardVigilanciaService {
 			query.setTimestamp("fechaInicio", timeStampInicio);
 			query.setTimestamp("fechaFinal", timeStampFinal);
 		}
-		//Par�metro regi�n
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {	
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro corregimiento
+		//Parametro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro localidad
+		//Parametro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
@@ -201,7 +201,7 @@ public class DashboardVigilanciaService {
 	
 	
 	/**
-	 * Regresa datos de casos confirmados por per�odo
+	 * Regresa datos de casos confirmados por periodo
 	 * 
 	 * @return lista de objetos
 	 */
@@ -216,7 +216,7 @@ public class DashboardVigilanciaService {
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por regi�n
+		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and sisvigdb.cat_distrito.id_region =:ouname ";
 		}
@@ -258,23 +258,23 @@ public class DashboardVigilanciaService {
 			query.setTimestamp("fechaInicio", timeStampInicio);
 			query.setTimestamp("fechaFinal", timeStampFinal);
 		}
-		//Par�metro regi�n
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {	
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro corregimiento
+		//Parametro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro localidad
+		//Parametro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}

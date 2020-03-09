@@ -15,7 +15,7 @@ import pa.gob.minsa.sisvigmalariatablero.domain.audit.Auditable;
  * Foco
  * 
  *  
- * @author      William Avilés
+ * @author      William Aviles
  * @version     1.0
  * @since       1.0
  */

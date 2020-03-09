@@ -17,6 +17,7 @@ import pa.gob.minsa.sisvigmalariatablero.service.DashboardPortadaService;
 import pa.gob.minsa.sisvigmalariatablero.service.OUService;
 
 
+
 /**
  * Controlador que provee los mapeos en la pagina Web para:
  * 
@@ -27,7 +28,7 @@ import pa.gob.minsa.sisvigmalariatablero.service.OUService;
  * <li>Pagina de Salida
  * <li>No autorizado
  * <li>No encontrado
- * <li>Reset contraseña
+ * <li>Reset contrasena
  * </ul>
  * 
  * @author William Aviles

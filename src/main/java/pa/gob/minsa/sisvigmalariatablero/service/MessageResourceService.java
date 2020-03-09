@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pa.gob.minsa.sisvigmalariatablero.language.MessageResource;
 
 /**
- * Servicio para el objeto MessageResource utilizado para manejo de idiomas (localización)
+ * Servicio para el objeto MessageResource utilizado para manejo de idiomas (localizacion)
  * 
  * @author William Aviles
  * 

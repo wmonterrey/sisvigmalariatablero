@@ -116,7 +116,7 @@ public class UsuarioService {
 	}
 	
 	/**
-	 * Verifica si tiene que cambiar contraseña
+	 * Verifica si tiene que cambiar contrasena
 	 * @param username Nombre del usuario. 
 	 * @return boolean
 	 */

@@ -14,20 +14,20 @@ import pa.gob.minsa.sisvigmalariatablero.domain.audit.Auditable;
 /**
  * MessageResource es la clase que representa el registro de catalogos y mensajes en el sistema.
  * 
- * MessageResource incluye información como:
+ * MessageResource incluye informacion como:
  * 
  * <ul>
  * <li>Clave del mensaje
  * <li>Catalogo al que pertenece
  * <li>Clave del catalogo
- * <li>Valor en español
- * <li>Valor en inglés
+ * <li>Valor en espanol
+ * <li>Valor en ingles
  * </ul>
  * <p>
  * 
  * 
  *  
- * @author      William Avilés
+ * @author      William Aviles
  * @version     1.0
  * @since       1.0
  */

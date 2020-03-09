@@ -30,7 +30,7 @@ public class DashboardPortadaService {
 	private SessionFactory sessionFactory;
 	
 	/**
-	 * Regresa a�os con registros en la base de datos
+	 * Regresa anos con registros en la base de datos
 	 * 
 	 * @return lista de objetos
 	 */
@@ -46,7 +46,7 @@ public class DashboardPortadaService {
 	
 	
 	/**
-	 * Regresa datos de casos confirmados por per�odo
+	 * Regresa datos de casos confirmados por periodo
 	 * 
 	 * @return lista de objetos
 	 */
@@ -88,7 +88,7 @@ public class DashboardPortadaService {
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por regi�n
+		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.ident =:ouname ";
 		}
@@ -124,27 +124,27 @@ public class DashboardPortadaService {
 		query.setParameter("eliminado", false);
 		query.setParameter("estado", "confirmado");
 		
-		//Par�metro regi�n
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro corregimiento
+		//Parametro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro localidad
+		//Parametro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro foco
+		//Parametro foco
 		else if(oulevel.equals("foci.samp")) {
 			query.setParameter("ouname", ouname);
 		}
@@ -165,7 +165,7 @@ public class DashboardPortadaService {
 				resultadoF.add(dato);
 			}
 		}
-		//Si quiere verse por d�a inicializar la lista
+		//Si quiere verse por dia inicializar la lista
 		else if(timeview.equals("day.samp")) {
 			for (int i = 0 ; i < 367 ; i++){
 				DatosTiempo dato = new DatosTiempo(sdf.format(c.getTime()),anio,0,0,0);
@@ -188,7 +188,7 @@ public class DashboardPortadaService {
 	
 	
 	/**
-	 * Regresa datos de muestras por per�odo
+	 * Regresa datos de muestras por periodo
 	 * 
 	 * @return lista de objetos
 	 */
@@ -219,7 +219,7 @@ public class DashboardPortadaService {
 		}
 		
 		/**
-		 * Regresa datos de muestras hist�ricos
+		 * Regresa datos de muestras historicos
 		 * 
 		 */
 		//Define en el query la vista de tiempo
@@ -233,11 +233,11 @@ public class DashboardPortadaService {
 			sqlQueryTiempoVista = "SELECT mc.fecha";
 			sqlQueryTiempoWhere = "se.fechaIni <= mc.fecha and se.fechaFin >= mc.fecha and se.anio=:anio";
 		}
-		//Pa�s
+		//Pais
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por regi�n
+		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and mc.localidad.corregimiento.distrito.region.ident =:ouname ";
 		}
@@ -268,27 +268,27 @@ public class DashboardPortadaService {
 				+ " FROM Muestras mc, SemanaEpidemiologica se where " + sqlQueryTiempoWhere + sqlQueryRegionWhere
 				+ " )");
 		query.setParameter("anio", anio);
-		//Par�metro region
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro corregimiento
+		//Parametro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro localidad
+		//Parametro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro foco
+		//Parametro foco
 		else if(oulevel.equals("foci.samp")) {
 			query.setParameter("ouname", ouname);
 		}		
@@ -309,7 +309,7 @@ public class DashboardPortadaService {
 				resultadoF.add(dato);
 			}
 		}
-		//Si quiere verse por d�a inicializar la lista
+		//Si quiere verse por dia inicializar la lista
 		else if(timeview.equals("day.samp")) {
 			for (int i = 0 ; i < 367 ; i++){
 				DatosTiempo dato = new DatosTiempo(sdf.format(c.getTime()),anio,0,0,0);
@@ -342,11 +342,11 @@ public class DashboardPortadaService {
 			sqlQueryTiempoVista = "SELECT mc.pdrfecha";
 			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
 		}
-		//Pa�s
+		//Pais
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por regi�n
+		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.ident =:ouname ";
 		}
@@ -378,27 +378,27 @@ public class DashboardPortadaService {
 		query.setParameter("anio", anio);
 		query.setParameter("eliminado", false);
 		
-		//par�metro regi�n
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//par�metro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//par�metro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//par�metro corregimiento
+		//Parametro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//par�metro localidad
+		//Parametro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro foco
+		//Parametro foco
 		else if(oulevel.equals("foci.samp")) {
 			query.setParameter("ouname", ouname);
 		}		
@@ -431,12 +431,12 @@ public class DashboardPortadaService {
 		List<Integer> localidadesSisvig = new ArrayList<Integer>();
 		Session session = sessionFactory.getCurrentSession();
 		
-		//Muestras hist�ricas
-		//Pa�s
+		//Muestras historicas
+		//Pais
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Regi�n
+		//region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and mc.localidad.corregimiento.distrito.region.ident =:ouname ";
 		}
@@ -464,27 +464,27 @@ public class DashboardPortadaService {
 		Query query = session.createQuery("Select mc.localidad.ident FROM Muestras mc where year(mc.fecha)=:anio " + sqlQueryRegionWhere
 				+ "group by mc.localidad.ident");
 		query.setParameter("anio", anio);
-		//Par�metro regi�n
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro corregimiento
+		//Parametro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro localidad
+		//Parametro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro foco
+		//Parametro foco
 		else if(oulevel.equals("foci.samp")) {
 			query.setParameter("ouname", ouname);
 		}		
@@ -503,11 +503,11 @@ public class DashboardPortadaService {
 			sqlQueryTiempoVista = "SELECT mc.pdrMuestraLocalidad.ident ";
 			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
 		}
-		//Pa�s
+		//Pais
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Regi�n
+		//region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.ident =:ouname ";
 		}
@@ -537,27 +537,27 @@ public class DashboardPortadaService {
 				+ " and mc.eliminado=:eliminado and (mc.pruebaRapida=1 or mc.labResultado is not null) group by mc.pdrMuestraLocalidad.ident");
 		query.setParameter("anio", anio);
 		query.setParameter("eliminado", false);
-		//Par�metro regi�n
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro corregimiento
+		//Parametro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro localidad
+		//Parametro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro foco
+		//Parametro foco
 		else if(oulevel.equals("foci.samp")) {
 			query.setParameter("ouname", ouname);
 		}			
@@ -602,7 +602,7 @@ public class DashboardPortadaService {
 			sqlQueryRegionWhere="";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.distrito.region.name";
 		}
-		//Por regi�n
+		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.distrito.name, count(mc.id)";
 			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
@@ -656,27 +656,27 @@ public class DashboardPortadaService {
 		query.setParameter("eliminado", false);
 		query.setParameter("estado", "confirmado");
 		
-		//Par�metro regi�n
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro corregimiento
+		//Parametro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro localidad
+		//Parametro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Par�metro localidad
+		//Parametro localidad
 		else if(oulevel.equals("foci.samp")) {
 			query.setParameter("ouname", ouname);
 		}

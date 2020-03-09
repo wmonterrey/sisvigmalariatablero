@@ -135,8 +135,8 @@ public class AdminUsuariosController {
      * 
      * @param userName nombre de usuario
      * @param completeName nombre completo de usuario
-     * @param confirmPassword Contraseña confirmar
-     * @param password Contraseña
+     * @param confirmPassword Contrasena confirmar
+     * @param password Contrasena
      * @param email Correo
      * @param authorities Roles
      * @return a ModelMap with the model attributes for the view

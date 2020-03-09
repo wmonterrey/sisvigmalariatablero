@@ -13,7 +13,7 @@ import org.hibernate.annotations.ForeignKey;
 import pa.gob.minsa.sisvigmalariatablero.domain.audit.Auditable;
 
 /**
- * Simple objeto de dominio que representa la relación de las localidades para un foco
+ * Simple objeto de dominio que representa la relacion de las localidades para un foco
  * 
  * @author William Aviles
  **/

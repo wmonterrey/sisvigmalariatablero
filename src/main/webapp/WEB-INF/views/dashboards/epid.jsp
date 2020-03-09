@@ -348,6 +348,8 @@
   	<spring:url value="/api/focos" var="opcFocosUrl"/>
   	<spring:url value="/api/localidades/" var="localidadesUrl"/>
   	
+  	<spring:url value="/resources/help/epi.html" var="helpUrl"/>
+  	
   	<!-- Mensajes -->
   	<c:set var="seleccionar"><spring:message code="select" /></c:set>
   	<c:set var="ourequerida"><spring:message code="ou.required" /></c:set>
@@ -380,6 +382,9 @@
 	    	$("li.tableros").addClass("active");
 	    	$("li.epid").addClass("active");
 	    });
+		function cargarAyuda(){ 
+			window.open("${helpUrl}");
+		}
 	</script>
 </body>
 </html>

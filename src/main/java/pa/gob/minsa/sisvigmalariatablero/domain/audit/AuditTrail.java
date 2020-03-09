@@ -3,24 +3,24 @@ package pa.gob.minsa.sisvigmalariatablero.domain.audit;
 import java.util.Date;
 
 /**
- * AuditTrail es la clase que representa el registro de auditoría en el sistema.
+ * AuditTrail es la clase que representa el registro de auditoria en el sistema.
  * 
- * AuditTrail incluye información como:
+ * AuditTrail incluye informacion como:
  * 
  * <ul>
  * <li>Clase
  * <li>Propiedad
  * <li>Valor anterior
  * <li>Valor actual
- * <li>Tipo de operación
+ * <li>Tipo de operacion
  * <li>Usuario
- * <li>Fecha de operación
+ * <li>Fecha de operacion
  * </ul>
  * <p>
  * 
  * 
  *  
- * @author      William Avilés
+ * @author      William Aviles
  * @version     1.0
  * @since       1.0
  */

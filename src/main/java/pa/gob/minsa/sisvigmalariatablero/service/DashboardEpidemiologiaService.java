@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pa.gob.minsa.sisvigmalariatablero.utils.DatosCanal;
 
 /**
- * Servicio para la seccion de epidemiología del dashboard
+ * Servicio para la seccion de epidemiologia del dashboard
  * 
  * @author William Aviles
  * 
@@ -32,7 +32,7 @@ public class DashboardEpidemiologiaService {
 	
 	
 	/**
-	 * Regresa datos de casos confirmados por período
+	 * Regresa datos de casos confirmados por periodo
 	 * 
 	 * @return lista de objetos
 	 */
@@ -47,7 +47,7 @@ public class DashboardEpidemiologiaService {
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por región
+		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " where cas.localidad.corregimiento.distrito.region.ident =:ouname ";
 		}
@@ -79,27 +79,27 @@ public class DashboardEpidemiologiaService {
 		//Todos los datos historicos
 		Query query = session.createQuery("SELECT cas.semana, cas.anio, count(cas.semana) as total "
 				+ " from Casos cas " + sqlQueryRegionWhere +" group by cas.semana, cas.anio");
-		//Parámetro región
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro corregimiento
+		//Parametro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro localidad
+		//Parametro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}		
-		//Parámetro foco
+		//Parametro foco
 		else if(oulevel.equals("foci.samp")) {
 			query.setParameter("ouname", ouname);
 		}
@@ -109,7 +109,7 @@ public class DashboardEpidemiologiaService {
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por región
+		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.ident =:ouname ";
 		}
@@ -143,27 +143,27 @@ public class DashboardEpidemiologiaService {
 		query.setParameter("eliminado", false);
 		query.setParameter("estado", "confirmado");
 		
-		//Parámetro región
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro corregimiento
+		//Parametro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro localidad
+		//Parametro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro foco
+		//Parametro foco
 		else if(oulevel.equals("foci.samp")) {
 			query.setParameter("ouname", ouname);
 		}	
@@ -208,7 +208,7 @@ public class DashboardEpidemiologiaService {
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por región
+		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.ident =:ouname ";
 		}
@@ -243,27 +243,27 @@ public class DashboardEpidemiologiaService {
 		query.setParameter("estado", "confirmado");
 		resultadosSisvig.clear();
 		
-		//Parámetro región
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro corregimiento
+		//Parametro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro localidad
+		//Parametro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro foco
+		//Parametro foco
 		else if(oulevel.equals("foci.samp")) {
 			query.setParameter("ouname", ouname);
 		}	
@@ -283,7 +283,7 @@ public class DashboardEpidemiologiaService {
 	}
 	
 	/**
-	 * Regresa datos de casos confirmados por período
+	 * Regresa datos de casos confirmados por periodo
 	 * 
 	 * @return lista de objetos
 	 */
@@ -301,7 +301,7 @@ public class DashboardEpidemiologiaService {
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por región
+		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " where cas.localidad.corregimiento.distrito.region.ident =:ouname ";
 		}
@@ -340,27 +340,27 @@ public class DashboardEpidemiologiaService {
 				+ " SUM( CASE WHEN cas.especie IS NULL THEN 1 ELSE 0 END ) AS NDE "
 				+ " FROM Casos cas "+ sqlQueryRegionWhere +"group by cas.anio");
 		
-		//Parámetro región
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro corregimiento
+		//Parametro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro localidad
+		//Parametro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro foco
+		//Parametro foco
 		else if(oulevel.equals("foci.samp")) {
 			query.setParameter("ouname", ouname);
 		}	
@@ -374,7 +374,7 @@ public class DashboardEpidemiologiaService {
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por región
+		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.ident =:ouname ";
 		}
@@ -421,27 +421,27 @@ public class DashboardEpidemiologiaService {
 		query.setParameter("eliminado", false);
 		query.setParameter("estado", "confirmado");
 		
-		//Parámetro región
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro corregimiento
+		//Parametro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro localidad
+		//Parametro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro foco
+		//Parametro foco
 		else if(oulevel.equals("foci.samp")) {
 			query.setParameter("ouname", ouname);
 		}		
@@ -484,7 +484,7 @@ public class DashboardEpidemiologiaService {
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.distrito.provincia.ident";
 		}
 
-		//Por región
+		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.distrito.ident, count(mc.id)";
 			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
@@ -521,15 +521,15 @@ public class DashboardEpidemiologiaService {
 		query.setParameter("eliminado", false);
 		query.setParameter("estado", "confirmado");
 		
-		//Parámetro región
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}

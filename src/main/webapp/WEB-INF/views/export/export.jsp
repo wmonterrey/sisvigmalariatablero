@@ -244,6 +244,7 @@
   	<spring:url value="/api/distritos" var="opcDistUrl"/>
   	<spring:url value="/api/corregimientos" var="opcCorregUrl"/>
   	<spring:url value="/api/localidades/" var="localidadesUrl"/>
+  	<spring:url value="/api/focos/" var="opcFocosUrl"/>
   	
  	<!-- Mensajes -->
 
@@ -258,7 +259,7 @@
 	<script>
 		jQuery(document).ready(function() {
 			var parametros = {casosUrl: "${casosUrl}", opcRegUrl: "${opcRegUrl}",localidadesUrl: "${localidadesUrl}",
-					 ourequerida: "${ourequerida}",opcProvUrl: "${opcProvUrl}",opcDistUrl: "${opcDistUrl}",opcCorregUrl: "${opcCorregUrl}",
+					 ourequerida: "${ourequerida}",opcProvUrl: "${opcProvUrl}",opcDistUrl: "${opcDistUrl}",opcCorregUrl: "${opcCorregUrl}",opcFocosUrl: "${opcFocosUrl}",
 					seleccionar: "${seleccionar}",dataTablesLang: "${dataTablesLang}",successmessage: "${successmessage}",waitmessage: "${waitmessage}",errormessage: "${errormessage}",noResults: "${noResults}"};
 			ProcessExport.init(parametros);
 			

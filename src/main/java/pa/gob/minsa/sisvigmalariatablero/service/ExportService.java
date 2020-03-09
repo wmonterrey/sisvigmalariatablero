@@ -25,7 +25,7 @@ public class ExportService {
 	private SessionFactory sessionFactory;
 	
 	/**
-	 * Regresa datos de casos confirmados por período
+	 * Regresa datos de casos confirmados por periodo
 	 * 
 	 * @return lista de objetos
 	 * @throws IllegalAccessException 
@@ -42,7 +42,7 @@ public class ExportService {
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
-		//Por región
+		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionWhere = " and sisvigdb.cat_distrito.id_region =:ouname ";
 		}
@@ -62,6 +62,10 @@ public class ExportService {
 		else if(oulevel.equals("local.samp")) {
 			sqlQueryRegionWhere = " and sisvigdb.malaria_casos.pdr_muestra_id_localidad =:ouname ";
 		}
+		//Por foco
+		else if(oulevel.equals("foci.samp")) {
+			sqlQueryRegionWhere = " and sisvigdb.malaria_casos.pdr_muestra_id_localidad IN (SELECT sisvig_tablero.focilocalities.locality FROM sisvig_tablero.focilocalities WHERE sisvig_tablero.focilocalities.foco =:ouname AND sisvig_tablero.focilocalities.pasive='0') ";
+		}		
 		
 		String sqlQuery = "SELECT sisvigdb.malaria_casos.id, sisvigdb.notic_form.id_notic, sisvigdb.tbl_persona.fecha_nacimiento, sisvigdb.tbl_persona.sexo, "
 				+ "sisvigdb.malaria_casos.estado as estado, sisvigdb.notic_form.fecha_notificacion, "
@@ -94,26 +98,30 @@ public class ExportService {
 			query.setTimestamp("fechaInicio", timeStampInicio);
 			query.setTimestamp("fechaFinal", timeStampFinal);
 		}
-		//Parámetro región
+		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro provincia
+		//Parametro provincia
 		else if(oulevel.equals("province.samp")) {	
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro distrito
+		//Parametro distrito
 		else if(oulevel.equals("district.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro corregimiento
+		//Parametro corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
-		//Parámetro localidad
+		//Parametro localidad
 		else if(oulevel.equals("local.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
 		}
+		//ParÃ¡metro foco
+		else if(oulevel.equals("foci.samp")) {
+			query.setParameter("ouname", ouname);
+		}			
 		return query.list();
 	}
 	

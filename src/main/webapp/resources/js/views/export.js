@@ -221,6 +221,25 @@ return {
     				$('#ouname').html(html);
     			});
   			}
+  			else if ($('#oulevel option:selected').val() == "foci.samp"){
+  				$("#ouname").wrap('<div class="position-relative"></div>')
+  		        .select2({
+  		          placeholder: parametros.seleccionar,
+  		          dropdownParent: $(this).parent(),
+  		          language:parametros.lenguaje
+  		        });
+  				$('#divouname').show();
+  				$.getJSON(parametros.opcFocosUrl, {
+    				ajax : 'true'
+    			}, function(data) {
+    				var html;
+    				var len = data.length;
+    				for ( var i = 0; i < len; i++) {
+    					html += '<option value="' + data[i].ident + '">'+ data[i].name  +'</option>';
+    				}
+    				$('#ouname').html(html);
+    			});
+  			}
   			else if($('#oulevel option:selected').val() == "local.samp"){
   				$('#divouname').show();
   				$("#ouname").wrap('<div class="position-relative"></div>').select2({

@@ -390,6 +390,8 @@
   	<c:set var="corregimiento"><spring:message code="correg.samp" /></c:set>
   	<c:set var="localidad"><spring:message code="local.samp" /></c:set>
   	
+  	<spring:url value="/resources/help/home.html" var="helpUrl"/>
+  	
 
 	<script>
 		jQuery(document).ready(function() {
@@ -411,7 +413,7 @@
 			
 	    });
 		function cargarAyuda(){ 
-			window.open("https://www.w3schools.com");
+			window.open("${helpUrl}");
 		}
 	</script>
 </body>

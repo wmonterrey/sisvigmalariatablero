@@ -9,21 +9,21 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * BaseMetaData es la clase que almacena la información de referencia acerca de los objetos.
+ * BaseMetaData es la clase que almacena la informacion de referencia acerca de los objetos.
  * 
- * BaseMetaData incluye información como:
+ * BaseMetaData incluye informacion como:
  * 
  * <ul>
  * <li>Fecha del registro
  * <li>Usuario que registra
  * <li>Estado del registro
  * <li>Identificador del dispositivo
- * <li>Si el registro fué borrado
+ * <li>Si el registro fue borrado
  * </ul>
  * 
  * 
  *  
- * @author      William Avilés
+ * @author      William Aviles
  * @version     1.0
  * @since       1.0
  */

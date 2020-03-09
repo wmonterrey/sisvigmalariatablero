@@ -7,7 +7,7 @@ import pa.gob.minsa.sisvigmalariatablero.users.model.UserAttempts;
 /**
  * Auditable es la interface para implementar los datos de usuario de spring.
  *  
- * @author      William Avilés
+ * @author      William Aviles
  * @version     1.0
  * @since       1.0
  */
