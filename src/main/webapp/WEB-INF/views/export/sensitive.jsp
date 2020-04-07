@@ -131,7 +131,8 @@
 					                	<tr>
 					                		<th>Id Caso</th>
 					                		<th>Id Not</th>
-					                		<th>Edad</th>
+					                		<th>Identificación</th>
+					                		<th>Nombre</th>
 					                		<th>Fecha Nac</th>
 					                		<th>Sexo</th>
 					                		<th>Estado</th>
@@ -234,10 +235,10 @@
   	<script src="${rangesLang}"></script>  	
   	
   	<!-- Urls -->
-  	<spring:url value="/resources/js/views/export.js" var="Export" />
+  	<spring:url value="/resources/js/views/exportsens.js" var="Export" />
   	<script src="${Export}" type="text/javascript"></script>
   	
-  	<spring:url value="/export/casos/" var="casosUrl"/>
+  	<spring:url value="/sensitive/casos/" var="casosUrl"/>
 
   	
   	<spring:url value="/api/regiones" var="opcRegUrl"/>
@@ -263,15 +264,8 @@
 					 ourequerida: "${ourequerida}",opcProvUrl: "${opcProvUrl}",opcDistUrl: "${opcDistUrl}",opcCorregUrl: "${opcCorregUrl}",opcFocosUrl: "${opcFocosUrl}",
 					seleccionar: "${seleccionar}",dataTablesLang: "${dataTablesLang}",successmessage: "${successmessage}",waitmessage: "${waitmessage}",errormessage: "${errormessage}",noResults: "${noResults}"};
 			ProcessExport.init(parametros);
-			
-			if ($('html').attr('dir') === 'rtl') {
-				$('#navbar-filtros .dropdown-menu').addClass('dropdown-menu-right');
-			}
-			$('.navbar-filtros-mega-dropdown').each(function() {
-				new MegaDropdown(this);
-			});
 
-	    	$("li.export").addClass("active");
+	    	$("li.sensitive").addClass("active");
 	    });
 	</script>
 </body>

@@ -13,6 +13,8 @@
 		<intercept-url pattern="/logout" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<intercept-url pattern="/resources/.*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<intercept-url pattern="/admin/.*" access="ROLE_ADMIN"/>
+		<intercept-url pattern="/sensitive/.*" access="ROLE_SENSITIVE"/>
+		<intercept-url pattern="/foci/.*" access="ROLE_ADMIN"/>
 		
 		
         <intercept-url pattern="/users/chgpass" access="ROLE_PASSWORD"/>

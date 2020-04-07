@@ -249,7 +249,7 @@ public class DashboardManejoService {
 				+ "INNER JOIN sisvigdb.cat_distrito ON sisvigdb.cat_corregimiento.id_distrito = sisvigdb.cat_distrito.id_distrito "
 				+ "WHERE sisvigdb.semana_epi.fecha_inicio <= CASE WHEN malaria_casos.fecha_inicio_sintomas IS NOT NULL then malaria_casos.fecha_inicio_sintomas ELSE malaria_casos.pdr_fecha END "
 				+ "AND sisvigdb.semana_epi.fecha_fin >= CASE WHEN malaria_casos.fecha_inicio_sintomas IS NOT NULL then malaria_casos.fecha_inicio_sintomas ELSE malaria_casos.pdr_fecha END  "
-				+ "and eliminado = 0 and "
+				+ "and eliminado = 0 and sisvigdb.malaria_casos.estado='confirmado' and "
 				+ "CASE WHEN malaria_casos.fecha_inicio_sintomas IS NOT NULL then malaria_casos.fecha_inicio_sintomas ELSE malaria_casos.pdr_fecha END between :fechaInicio and :fechaFinal "
 				+ "AND (malaria_casos.fiebre_30d=1 OR malaria_casos.sintomas Is Not NULL) "
 				+ sqlQueryRegionWhere 

@@ -1,17 +1,21 @@
 package pa.gob.minsa.sisvigmalariatablero.web.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import pa.gob.minsa.sisvigmalariatablero.service.DashboardPortadaService;
+import pa.gob.minsa.sisvigmalariatablero.service.UsuarioService;
+import pa.gob.minsa.sisvigmalariatablero.service.VisitsService;
 
 
 /**
@@ -27,6 +31,10 @@ public class DashboardController {
 	
 	@Resource(name="dashboardPortadaService")
 	private DashboardPortadaService dashboardPortadaService;
+	@Resource(name="visitsService")
+	private VisitsService visitsService;
+	@Resource(name="usuarioService")
+	private UsuarioService usuarioService;
 	
 	/**
      * Custom handler for showing the epid dashboard.
@@ -38,6 +46,7 @@ public class DashboardController {
     	logger.info("showing Epidemiology Dashboard...");
     	List<Integer> anios = this.dashboardPortadaService.getAniosDB();
     	model.addAttribute("anios", anios);
+    	this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"epidpage");
     	return "dashboards/epid";
 	}
     
@@ -51,6 +60,7 @@ public class DashboardController {
     	logger.info("showing Surveillance Dashboard...");
     	List<Integer> anios = this.dashboardPortadaService.getAniosDB();
     	model.addAttribute("anios", anios);
+    	this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"vigpage");
     	return "dashboards/vig";
 	}
     
@@ -64,6 +74,7 @@ public class DashboardController {
     	logger.info("showing Cases Dashboard...");
     	List<Integer> anios = this.dashboardPortadaService.getAniosDB();
     	model.addAttribute("anios", anios);
+    	this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"casemgmpage");
     	return "dashboards/casemgm";
 	}
 	

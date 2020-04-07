@@ -2,10 +2,12 @@
 INSERT INTO roles (ROLE) VALUES ('ROLE_EPI');
 INSERT INTO roles (ROLE) VALUES ('ROLE_ADMIN');
 INSERT INTO roles (ROLE) VALUES ('ROLE_PASSWORD');
+INSERT INTO roles (ROLE) VALUES ('ROLE_SENSITIVE');
 INSERT INTO users (username, credentialsNonExpired, accountNonLocked, changePasswordNextLogin, completeName, created,createdBy, accountNonExpired, email, enabled, lastAccess, lastCredentialChange, modified, modifiedBy, password) VALUES ('admin', b'1', b'1', b'0', 'Administrador del Sistema', '2019-11-08 00:00:00', 'admin', b'1', 'waviles@clintonhealthaccess.org', b'1', '2019-11-08 00:00:00', '2019-11-08 00:00:00', '2019-11-08 00:00:00', 'admin', '6c36dc262b0e44be5811c2296669fc65643aec9dcaa4a76501e0a9508b633fd01ee59a207f8c6d68');
 INSERT INTO userroles (ROLE, username, deviceid, status, pasive, recordDate,recordUser) VALUES ('ROLE_ADMIN', 'admin', 'admin', '2', '0', '2019-11-08 00:00:00', 'admin');
 INSERT INTO userroles (ROLE, username, deviceid, status, pasive, recordDate,recordUser) VALUES ('ROLE_PASSWORD', 'admin', 'admin', '2', '0', '2019-11-08 00:00:00', 'admin');
 INSERT INTO userroles (ROLE, username, deviceid, status, pasive, recordDate,recordUser) VALUES ('ROLE_EPI', 'admin', 'admin', '2', '0', '2019-11-08 00:00:00', 'admin');
+INSERT INTO userroles (ROLE, username, deviceid, status, pasive, recordDate,recordUser) VALUES ('ROLE_SENSITIVE', 'admin', 'admin', '2', '0', '2019-11-08 00:00:00', 'admin');
 
 //Mensajes plantilla
 INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('title', NULL, NULL, 'SISVIG', '0', 0, '0', 'SISVIG');
@@ -207,3 +209,35 @@ INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden
 INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('thisMonth', NULL, NULL, 'This Month', '0', 0, '0', 'Este Mes');
 
 INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('noResults', NULL, NULL, 'There are no results', '0', 0, '0', 'No hay registros!');
+
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('audittrail', NULL, NULL, 'Audit Trail', '0', 0, '0', 'Bitacora de cambios');
+
+
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('entityClass', NULL, NULL, 'Class', '0', 0, '0', 'Clase');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('entityName', NULL, NULL, 'Name', '0', 0, '0', 'Nombre');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('entityProperty', NULL, NULL, 'Property', '0', 0, '0', 'Propiedad');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('entityPropertyNewValue', NULL, NULL, 'New value', '0', 0, '0', 'Nuevo valor');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('entityPropertyOldValue', NULL, NULL, 'Old value', '0', 0, '0', 'Valor anterior');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('modifiedBy', NULL, NULL, 'Modified by', '0', 0, '0', 'Modificado por');
+
+
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('class pa.gob.minsa.sisvigmalariatablero.users.model.Authority', NULL, NULL, 'Role', '0', 0, '0', 'Rol');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('class pa.gob.minsa.sisvigmalariatablero.users.model.UserSistema', NULL, NULL, 'User', '0', 0, '0', 'Usuario');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('addedBy', NULL, NULL, 'Added by', '0', 0, '0', 'Agregado por');
+
+
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('session', NULL, NULL, 'session ID', '0', 0, '0', 'Id de sesion');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('ipaddress', NULL, NULL, 'IP address', '0', 0, '0', 'Direccion IP');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('logindate', NULL, NULL, 'Login date', '0', 0, '0', 'Fecha ingreso');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('logoutdate', NULL, NULL, 'Logout date', '0', 0, '0', 'Fecha salida');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('logouturl', NULL, NULL, 'Logout url', '0', 0, '0', 'URL salida');
+
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('ROLE_ADMIN', NULL, NULL, 'administrator ', '0', 0, '0', 'Administrador');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('ROLE_PASSWORD', NULL, NULL, 'Change password', '0', 0, '0', 'Cambio de contraseña');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('ROLE_EPI', NULL, NULL, 'epidemiologist ', '0', 0, '0', 'Espidemiólogo');
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('ROLE_SENSITIVE', NULL, NULL, 'Sensitive', '0', 0, '0', 'Info sensible');
+
+INSERT INTO `messages` (`messageKey`, `catKey`, `catRoot`, `en`, `isCat`, `orden`, `catPasive`, `es`) VALUES ('sensitive', NULL, NULL, 'Export with personal data', '0', 0, '0', 'Exportar con datos personales');
+
+
+

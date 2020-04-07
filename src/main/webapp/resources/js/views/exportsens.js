@@ -353,7 +353,7 @@ return {
 		  
 		  for (var row in data) {
 			  
-			  table1.row.add([data[row].id,data[row].idNotic,data[row].edad,data[row].fechaNacimiento,data[row].sexo,data[row].estado
+			  table1.row.add([data[row].id,data[row].idNotic,data[row].numIdent, data[row].nombre, data[row].fechaNacimiento,data[row].sexo,data[row].estado
 				  ,data[row].fechaNotificacion,data[row].unidadNotificadora,data[row].fis,data[row].fechaMuestra
 				  ,data[row].semana,data[row].anio,data[row].tipoBusqueda,data[row].pdr,data[row].pdrResultado
 				  ,data[row].pdrParasito,data[row].ggFecha,data[row].ggRes,data[row].ggEsp

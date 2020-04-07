@@ -1,11 +1,12 @@
 package pa.gob.minsa.sisvigmalariatablero;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import pa.gob.minsa.sisvigmalariatablero.service.DashboardPortadaService;
 import pa.gob.minsa.sisvigmalariatablero.service.OUService;
+import pa.gob.minsa.sisvigmalariatablero.service.UsuarioService;
+import pa.gob.minsa.sisvigmalariatablero.service.VisitsService;
 
 
 
@@ -40,6 +43,10 @@ public class HomeController {
 	private DashboardPortadaService dashboardPortadaService;
 	@Resource(name="ouService")
 	private OUService ouService;
+	@Resource(name="visitsService")
+	private VisitsService visitsService;
+	@Resource(name="usuarioService")
+	private UsuarioService usuarioService;
 	
     private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
@@ -49,6 +56,7 @@ public class HomeController {
 	    	logger.info("sisvig tablero Iniciado..."); 
 	    	List<Integer> anios = this.dashboardPortadaService.getAniosDB();
 	    	model.addAttribute("anios", anios);
+	    	this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"homepage");
     	}
     	catch(Exception e) {
     		logger.error(e.getLocalizedMessage());

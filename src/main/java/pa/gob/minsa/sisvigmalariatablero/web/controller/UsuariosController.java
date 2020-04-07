@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import pa.gob.minsa.sisvigmalariatablero.domain.audit.AuditTrail;
 import pa.gob.minsa.sisvigmalariatablero.service.AuditTrailService;
 import pa.gob.minsa.sisvigmalariatablero.service.UsuarioService;
+import pa.gob.minsa.sisvigmalariatablero.service.VisitsService;
 import pa.gob.minsa.sisvigmalariatablero.users.model.Authority;
 import pa.gob.minsa.sisvigmalariatablero.users.model.UserAccess;
 import pa.gob.minsa.sisvigmalariatablero.users.model.UserSistema;
@@ -38,6 +39,8 @@ public class UsuariosController {
 	private UsuarioService usuarioService;
 	@Resource(name="auditTrailService")
 	private AuditTrailService auditTrailService;
+	@Resource(name="visitsService")
+	private VisitsService visitsService;
 	
 	
 	@RequestMapping(value="checkcredential", method=RequestMethod.GET)
@@ -73,6 +76,7 @@ public class UsuariosController {
         mav.addObject("bitacora",bitacoraUsuario);
         List<Authority> rolesusuario = this.usuarioService.getRolesUsuarioTodos(authentication.getName());
         mav.addObject("rolesusuario", rolesusuario);
+        this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"userpage");
         return mav;
     }
     
@@ -88,6 +92,7 @@ public class UsuariosController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserSistema user = this.usuarioService.getUser(authentication.getName());
         mav.addObject("user",user);
+        this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"edituserpage");
         return mav;
     }
     
@@ -116,6 +121,7 @@ public class UsuariosController {
     
     @RequestMapping(value = "chgpass", method = RequestMethod.GET)
     public String initChangePassForm() {
+    	this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"userpasspage");
 	    return "users/passForm";
     }
     

@@ -120,7 +120,7 @@
 	<script>
 		jQuery(document).ready(function() {
 	    	$("li.foci").addClass("active");
-	    	$('#lista_focos').DataTable({
+	    	$('.datatable').DataTable({
 				  dom: 'lBfrtip',
 		          "oLanguage": {
 		              "sUrl": "${dataTablesLang}"

@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.joda.time.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,20 +26,19 @@ import pa.gob.minsa.sisvigmalariatablero.service.ExportService;
 import pa.gob.minsa.sisvigmalariatablero.service.OUService;
 import pa.gob.minsa.sisvigmalariatablero.service.UsuarioService;
 import pa.gob.minsa.sisvigmalariatablero.service.VisitsService;
-import pa.gob.minsa.sisvigmalariatablero.utils.CalcularEdad;
 
 
 /**
- * Controlador web de peticiones relacionadas a exportar
+ * Controlador web de peticiones relacionadas a exportar datos personales
  * 
  * 
  * 
  * @author William Aviles
  */
 @Controller
-@RequestMapping("/export/*")
-public class ExportController {
-	private static final Logger logger = LoggerFactory.getLogger(ExportController.class);
+@RequestMapping("/sensitive/*")
+public class SensitiveController {
+	private static final Logger logger = LoggerFactory.getLogger(SensitiveController.class);
 
 	@Resource(name="exportService")
 	private ExportService exportService;
@@ -69,8 +67,8 @@ public class ExportController {
     	logger.info("showing Export page ..");
     	List<Integer> anios = this.dashboardPortadaService.getAniosDB();
     	model.addAttribute("anios", anios);
-    	this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"exportpage");
-    	return "export/export";
+    	this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"exportsensitivepage");
+    	return "export/sensitive";
 	}
     
     @RequestMapping(value = "/casos/", method = RequestMethod.GET, produces = "application/json")
@@ -80,18 +78,15 @@ public class ExportController {
     		,@RequestParam(value = "ouname", required = false, defaultValue="") String ouname
     		) throws ParseException{
         logger.info("Obteniendo casos confirmados por periodo");
-        
+        String nombreCompleto;
         Long desde = null;
         Long hasta = null;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        CalcularEdad ce = new CalcularEdad();
-        Period fiff;
-        Date fechaNac = null, fechaFISSamp = null;
         
         if (!fechaInicio.matches("")) desde = formatter.parse(fechaInicio).getTime();
         if (!fechaFin.matches("")) hasta = formatter.parse(fechaFin).getTime();
         
-        List<Object[]> datos = exportService.getDatosCasos(desde, hasta,oulevel,ouname);
+        List<Object[]> datos = exportService.getDatosCasosPersonalInfo(desde, hasta,oulevel,ouname);
         List<MalariaCasoReporte> casosReporte = new ArrayList<MalariaCasoReporte>();
         
         if (datos == null){
@@ -99,129 +94,112 @@ public class ExportController {
         }
         else {
         	for(Object[] caso: datos) {
-        		fechaNac = null; fechaFISSamp = null;
         		MalariaCasoReporte mcr = new MalariaCasoReporte();
+        		nombreCompleto="";
         		mcr.setId(Integer.valueOf(caso[0].toString()));
         		if(caso[1]!=null) mcr.setIdNotic(Integer.valueOf(caso[1].toString()));
-        		if(caso[2]!=null) {
-        			mcr.setFechaNacimiento(caso[2].toString().substring(0, 10));
-        			fechaNac = formatter.parse(caso[2].toString().substring(0, 10));
-        		}
+        		if(caso[2]!=null) mcr.setNumIdent(caso[2].toString());
+        		if(caso[3]!=null) nombreCompleto = nombreCompleto + caso[3].toString() + " ";
+        		if(caso[4]!=null) nombreCompleto = nombreCompleto + caso[4].toString() + " ";
+        		if(caso[5]!=null) nombreCompleto = nombreCompleto + caso[5].toString() + " ";
+        		if(caso[6]!=null) nombreCompleto = nombreCompleto + caso[6].toString();
+        		mcr.setNombre(nombreCompleto);
         		
-        		if(caso[3]!=null) {
-        			mcr.setSexo(caso[3].toString());
-        		}
-        		else {
-        			mcr.setSexo("D");
-        		}
-        		if(caso[4]!=null) {
-        			if(caso[4].toString().equals("c")) {
+        		if(caso[7]!=null) mcr.setFechaNacimiento(caso[7].toString().substring(0, 10));
+        		if(caso[8]!=null) mcr.setSexo(caso[8].toString());
+        		if(caso[9]!=null) {
+        			if(caso[9].toString().equals("c")) {
         				mcr.setEstado("confirmado");
         			}
-        			else if(caso[4].toString().equals("s")) {
+        			else if(caso[9].toString().equals("s")) {
         				mcr.setEstado("sospechoso");
         			}
-        			else if(caso[4].toString().equals("d")) {
+        			else if(caso[9].toString().equals("d")) {
         				mcr.setEstado("descartado");
         			}
         			else {
         				mcr.setEstado("desconocido");
         			}
         		}
-        		if(caso[5]!=null) mcr.setFechaNotificacion(caso[5].toString());
-        		if(caso[6]!=null) {
-        			if(this.ouService.getUnidadNotificadora(Integer.valueOf(caso[6].toString()))!=null) {
-        				mcr.setUnidadNotificadora(this.ouService.getUnidadNotificadora(Integer.valueOf(caso[6].toString())).getName());
+        		if(caso[10]!=null) mcr.setFechaNotificacion(caso[10].toString());
+        		if(caso[11]!=null) {
+        			if(this.ouService.getUnidadNotificadora(Integer.valueOf(caso[11].toString()))!=null) {
+        				mcr.setUnidadNotificadora(this.ouService.getUnidadNotificadora(Integer.valueOf(caso[11].toString())).getName());
         			}
         			else {
-        				mcr.setUnidadNotificadora(caso[6].toString());
+        				mcr.setUnidadNotificadora(caso[11].toString());
         			}
         		}
-        		if(caso[7]!=null) {
-        			mcr.setFis(caso[7].toString());
-        			fechaFISSamp = formatter.parse(caso[7].toString());
-        		}
-        		if(caso[8]!=null) {
-        			mcr.setFechaMuestra(caso[8].toString());
-        			if(fechaFISSamp==null) fechaFISSamp = formatter.parse(caso[8].toString());
-        		}
-        		if(fechaFISSamp!=null&&fechaNac!=null) {
-        			fiff = ce.calcDiff(fechaNac, fechaFISSamp);
-        			mcr.setEdad(fiff.getYears());
-        		}
-        		else {
-        			mcr.setEdad(0);
-        		}
-        		
-        		
-        		if(caso[9]!=null) mcr.setSemana(caso[9].toString());
-        		if(caso[10]!=null) mcr.setAnio(caso[10].toString());
-        		if(caso[11]!=null) {
-        			if(caso[11].toString().equals("a")) {
+        		if(caso[12]!=null) mcr.setFis(caso[12].toString());
+        		if(caso[13]!=null) mcr.setFechaMuestra(caso[13].toString());
+        		if(caso[14]!=null) mcr.setSemana(caso[14].toString());
+        		if(caso[15]!=null) mcr.setAnio(caso[15].toString());
+        		if(caso[16]!=null) {
+        			if(caso[16].toString().equals("a")) {
         				mcr.setTipoBusqueda("activa");
         			}
-        			else if(caso[11].toString().equals("p")) {
+        			else if(caso[16].toString().equals("p")) {
         				mcr.setTipoBusqueda("pasiva");
         			}
-        			else if(caso[11].toString().equals("e")) {
+        			else if(caso[16].toString().equals("e")) {
         				mcr.setTipoBusqueda("encuesta");
         			}
-        			else if(caso[11].toString().equals("r")) {
+        			else if(caso[16].toString().equals("r")) {
         				mcr.setTipoBusqueda("reactiva");
         			}
         			else {
         				mcr.setTipoBusqueda("desconocido");
         			}
         		}
-        		if(caso[12]!=null) mcr.setPdr(caso[12].toString().equals("1")?"Si":"No");
-        		if(caso[13]!=null && caso[12].toString().equals("1")) {
-        			if(caso[13].toString().equals("p")) {
+        		if(caso[17]!=null) mcr.setPdr(caso[17].toString().equals("1")?"Si":"No");
+        		if(caso[18]!=null && caso[17].toString().equals("1")) {
+        			if(caso[18].toString().equals("p")) {
         				mcr.setPdrResultado("positivo");
         			}
-        			else if(caso[13].toString().equals("n")) {
+        			else if(caso[18].toString().equals("n")) {
         				mcr.setPdrResultado("negativo");
         			}
-        			else if(caso[13].toString().equals("i")) {
+        			else if(caso[18].toString().equals("i")) {
         				mcr.setPdrResultado("invalido");
         			}
         			else {
         				mcr.setPdrResultado("desconocido");
         			}
         		}
-        		if(caso[14]!=null) {
-        			if(this.catalogosService.getTipoPlasmodium(Integer.valueOf(caso[14].toString()))!=null) {
-        				mcr.setPdrParasito(this.catalogosService.getTipoPlasmodium(Integer.valueOf(caso[14].toString())).getName());
+        		if(caso[19]!=null) {
+        			if(this.catalogosService.getTipoPlasmodium(Integer.valueOf(caso[19].toString()))!=null) {
+        				mcr.setPdrParasito(this.catalogosService.getTipoPlasmodium(Integer.valueOf(caso[19].toString())).getName());
         			}
         			else {
-        				mcr.setPdrParasito(caso[14].toString());
+        				mcr.setPdrParasito(caso[19].toString());
         			}
         		}
-        		if(caso[15]!=null) mcr.setGgFecha(caso[15].toString());
-        		if(caso[16]!=null) {
-        			if(caso[16].toString().equals("P")) {
+        		if(caso[20]!=null) mcr.setGgFecha(caso[20].toString());
+        		if(caso[21]!=null) {
+        			if(caso[21].toString().equals("P")) {
         				mcr.setGgRes("positivo");
         			}
-        			else if(caso[16].toString().equals("N")) {
+        			else if(caso[21].toString().equals("N")) {
         				mcr.setGgRes("negativo");
         			}
         			else {
         				mcr.setGgRes("desconocido");
         			}
         		}
-        		if(caso[17]!=null) {
-        			mcr.setGgEsp(caso[17].toString());
-        			if(this.catalogosService.getTipoPlasmodium(Integer.valueOf(caso[17].toString()))!=null) {
-        				mcr.setGgEsp(this.catalogosService.getTipoPlasmodium(Integer.valueOf(caso[17].toString())).getName());
+        		if(caso[22]!=null) {
+        			mcr.setGgEsp(caso[22].toString());
+        			if(this.catalogosService.getTipoPlasmodium(Integer.valueOf(caso[22].toString()))!=null) {
+        				mcr.setGgEsp(this.catalogosService.getTipoPlasmodium(Integer.valueOf(caso[22].toString())).getName());
         			}
         			else {
-        				mcr.setGgEsp(caso[17].toString());
+        				mcr.setGgEsp(caso[22].toString());
         			}
         		}
         		
         		
         		
-        		if(caso[18]!=null) {
-        			Localidad localidadMuestra = this.ouService.getLocalidad(Integer.valueOf(caso[18].toString()));
+        		if(caso[23]!=null) {
+        			Localidad localidadMuestra = this.ouService.getLocalidad(Integer.valueOf(caso[23].toString()));
         			if(localidadMuestra!=null) {
         				mcr.setRegionMuestra(localidadMuestra.getCorregimiento().getDistrito().getRegion().getName());
         				mcr.setDistritoMuestra(localidadMuestra.getCorregimiento().getDistrito().getName());
@@ -229,21 +207,21 @@ public class ExportController {
         				mcr.setLocalidadMuestra(localidadMuestra.getName());
         			}
         			else {
-        				mcr.setLocalidadMuestra(caso[18].toString());
+        				mcr.setLocalidadMuestra(caso[23].toString());
         			}
         		}
         		
-        		if(caso[19]!=null) {
-        			if(this.catalogosService.getPais(Integer.valueOf(caso[19].toString()))!=null) {
-        				mcr.setPaisResidencia(this.catalogosService.getPais(Integer.valueOf(caso[19].toString())).getName());
+        		if(caso[24]!=null) {
+        			if(this.catalogosService.getPais(Integer.valueOf(caso[24].toString()))!=null) {
+        				mcr.setPaisResidencia(this.catalogosService.getPais(Integer.valueOf(caso[24].toString())).getName());
         			}
         			else {
-        				mcr.setPaisResidencia(caso[19].toString());
+        				mcr.setPaisResidencia(caso[24].toString());
         			}
         		}
         		
-        		if(caso[20]!=null) {
-        			Localidad localidadResidencia = this.ouService.getLocalidad(Integer.valueOf(caso[20].toString()));
+        		if(caso[25]!=null) {
+        			Localidad localidadResidencia = this.ouService.getLocalidad(Integer.valueOf(caso[25].toString()));
         			if(localidadResidencia!=null) {
         				mcr.setRegionResidencia(localidadResidencia.getCorregimiento().getDistrito().getRegion().getName());
         				mcr.setDistritoResidencia(localidadResidencia.getCorregimiento().getDistrito().getName());
@@ -251,54 +229,54 @@ public class ExportController {
         				mcr.setLocalidadResidencia(localidadResidencia.getName());
         			}
         			else {
-        				mcr.setLocalidadResidencia(caso[20].toString());
+        				mcr.setLocalidadResidencia(caso[25].toString());
         			}
         		}
         		
-        		if(caso[21]!=null) mcr.setFuncionario(caso[21].toString());
-        		if(caso[22]!=null) mcr.setClave(caso[22].toString());
-        		if(caso[23]!=null) mcr.setInv(caso[23].toString());
-        		if(caso[24]!=null) mcr.setClas(caso[24].toString());
-        		if(caso[25]!=null) {
-        			if(caso[25].toString().equals("a")) {
+        		if(caso[26]!=null) mcr.setFuncionario(caso[26].toString());
+        		if(caso[27]!=null) mcr.setClave(caso[27].toString());
+        		if(caso[28]!=null) mcr.setInv(caso[28].toString());
+        		if(caso[29]!=null) mcr.setClas(caso[29].toString());
+        		if(caso[30]!=null) {
+        			if(caso[30].toString().equals("a")) {
         				mcr.setTipoCaso("autoctono");
         			}
-        			else if(caso[25].toString().equals("i")) {
+        			else if(caso[30].toString().equals("i")) {
         				mcr.setTipoCaso("importado");
         			}
         			else {
         				mcr.setGgRes("desconocido");
         			}
         		}
-        		if(caso[26]!=null) {
-        			if(caso[26].toString().equals("r")) {
+        		if(caso[31]!=null) {
+        			if(caso[31].toString().equals("r")) {
         				mcr.setOrigenInf("residencia");
         			}
-        			else if(caso[26].toString().equals("v")) {
+        			else if(caso[31].toString().equals("v")) {
         				mcr.setOrigenInf("viaje");
         			}
         			else {
         				mcr.setOrigenInf("desconocido");
         			}
         		}
-        		if(caso[27]!=null) {
-        			if(caso[27].toString().equals("true")) {
+        		if(caso[32]!=null) {
+        			if(caso[32].toString().equals("true")) {
         				mcr.setTx("Si");
         			}
         			else {
         				mcr.setTx("No");
         			}
         		}
-        		if(caso[28]!=null) mcr.setFtx(caso[28].toString());
-        		if(caso[29]!=null) {
-        			if(caso[29].toString().equals("true")) {
+        		if(caso[33]!=null) mcr.setFtx(caso[33].toString());
+        		if(caso[34]!=null) {
+        			if(caso[34].toString().equals("true")) {
         				mcr.setTxcomp("Si");
         			}
         			else {
         				mcr.setTxcomp("No");
         			}
         		}        		
-        		if(caso[30]!=null) mcr.setCausaincomp(caso[30].toString());
+        		if(caso[35]!=null) mcr.setCausaincomp(caso[35].toString());
         		
         		casosReporte.add(mcr);
         	}

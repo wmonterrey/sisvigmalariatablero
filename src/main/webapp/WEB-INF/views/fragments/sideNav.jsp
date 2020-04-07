@@ -50,6 +50,13 @@
             <div><spring:message code="export" /></div>
           </a>
         </li>
+        <sec:authorize url="/sensitive/">
+        <li class="sidenav-item sensitive">
+          <a href="<spring:url value="/sensitive/" htmlEscape="true" />" class="sidenav-link"><i class="sidenav-icon ion ion-md-grid"></i>
+            <div><spring:message code="sensitive" /></div>
+          </a>
+        </li>
+        </sec:authorize>
         <li class="sidenav-item map">
           <a href="<spring:url value="/map/" htmlEscape="true" />" class="sidenav-link"><i class="sidenav-icon ion ion-md-map"></i>
             <div><spring:message code="maps" /></div>
@@ -70,11 +77,13 @@
             </ul>
             </sec:authorize>
         </li>
+        <sec:authorize url="/admin/">
         <li class="sidenav-item foci">
           <a href="<spring:url value="/foci/" htmlEscape="true" />" class="sidenav-link"><i class="sidenav-icon ion ion-md-cloud-outline"></i>
             <div><spring:message code="foci" /></div>
           </a>
         </li>
+        </sec:authorize>
         <li class="sidenav-item">
           <a href="<spring:url value="/logout" htmlEscape="true" />" class="sidenav-link"><i class="sidenav-icon ion ion-ios-log-out"></i>
             <div><spring:message code="logout" /></div>

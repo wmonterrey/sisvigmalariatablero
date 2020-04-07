@@ -27,6 +27,8 @@ import pa.gob.minsa.sisvigmalariatablero.service.AuditTrailService;
 import pa.gob.minsa.sisvigmalariatablero.service.FocoService;
 import pa.gob.minsa.sisvigmalariatablero.service.MessageResourceService;
 import pa.gob.minsa.sisvigmalariatablero.service.OUService;
+import pa.gob.minsa.sisvigmalariatablero.service.UsuarioService;
+import pa.gob.minsa.sisvigmalariatablero.service.VisitsService;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
@@ -51,6 +53,11 @@ public class FocosController {
 	private MessageResourceService messageResourceService;
 	@Resource(name="ouService")
 	private OUService ouService;
+	
+	@Resource(name="visitsService")
+	private VisitsService visitsService;
+	@Resource(name="usuarioService")
+	private UsuarioService usuarioService;
     
     
 	@RequestMapping(value = "/", method = RequestMethod.GET)
@@ -58,6 +65,7 @@ public class FocosController {
     	logger.debug("Mostrando Focos en JSP");
     	List<Foco> focos = focoService.getFocos();
     	model.addAttribute("focos", focos);
+    	this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"focipage");
     	return "foci/list";
 	}
 	
@@ -68,6 +76,7 @@ public class FocosController {
      */
     @RequestMapping(value = "/newEntity/", method = RequestMethod.GET)
 	public String addEntity(Model model) {
+    	this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"newfocipage");
     	return "foci/enterForm";
 	}
     
@@ -91,6 +100,7 @@ public class FocosController {
             mav.addObject("bitacora",bitacora);
             List<Localidad> localidadesSeleccionadas = focoService.getLocalidadesFoco(ident);
             mav.addObject("localidadesSeleccionadas",localidadesSeleccionadas);
+            this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"viewpage");
         }
         return mav;
     }
@@ -110,6 +120,7 @@ public class FocosController {
 	    	model.addAttribute("localidades", localidades);
 	    	List<Localidad> localidadesSeleccionadas = focoService.getLocalidadesFoco(ident);
 	    	model.addAttribute("localidadesSeleccionadas", localidadesSeleccionadas);
+	    	this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"editfocipage");
 			return "foci/enterForm";
 		}
 		else{

@@ -6,6 +6,9 @@ public class MalariaCasoReporte{
 	
 	private Integer id;
 	private Integer idNotic;
+	private String numIdent;
+	private String nombre;
+	private Integer edad;
 	private String fechaNacimiento;
 	private String sexo;
 	private String estado;
@@ -55,6 +58,25 @@ public class MalariaCasoReporte{
 	}
 	public void setIdNotic(Integer idNotic) {
 		this.idNotic = idNotic;
+	}
+	
+	public String getNumIdent() {
+		return numIdent;
+	}
+	public void setNumIdent(String numIdent) {
+		this.numIdent = numIdent;
+	}
+	public String getNombre() {
+		return nombre;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	public Integer getEdad() {
+		return edad;
+	}
+	public void setEdad(Integer edad) {
+		this.edad = edad;
 	}
 	public String getFechaNacimiento() {
 		return fechaNacimiento;

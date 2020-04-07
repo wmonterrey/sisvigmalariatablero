@@ -2,12 +2,14 @@ package pa.gob.minsa.sisvigmalariatablero.web.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import pa.gob.minsa.sisvigmalariatablero.service.DashboardPortadaService;
 import pa.gob.minsa.sisvigmalariatablero.service.MapService;
+import pa.gob.minsa.sisvigmalariatablero.service.UsuarioService;
+import pa.gob.minsa.sisvigmalariatablero.service.VisitsService;
 
 
 /**
@@ -37,6 +41,11 @@ public class MapController {
 	@Resource(name="dashboardPortadaService")
 	private DashboardPortadaService dashboardPortadaService;
 	
+	@Resource(name="visitsService")
+	private VisitsService visitsService;
+	@Resource(name="usuarioService")
+	private UsuarioService usuarioService;
+	
 	/**
      * Custom handler for showing the export.
      * @param model Modelo enlazado a la vista
@@ -47,6 +56,7 @@ public class MapController {
     	logger.info("showing Map page ..");
     	List<Integer> anios = this.dashboardPortadaService.getAniosDB();
     	model.addAttribute("anios", anios);
+    	this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"mappage");
     	return "mapas/mapa";
 	}
     

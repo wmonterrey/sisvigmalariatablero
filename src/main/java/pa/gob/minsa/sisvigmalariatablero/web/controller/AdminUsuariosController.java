@@ -9,6 +9,7 @@ import pa.gob.minsa.sisvigmalariatablero.service.AuditTrailService;
 import pa.gob.minsa.sisvigmalariatablero.service.MessageResourceService;
 import pa.gob.minsa.sisvigmalariatablero.service.OUService;
 import pa.gob.minsa.sisvigmalariatablero.service.UsuarioService;
+import pa.gob.minsa.sisvigmalariatablero.service.VisitsService;
 import pa.gob.minsa.sisvigmalariatablero.users.model.Authority;
 import pa.gob.minsa.sisvigmalariatablero.users.model.AuthorityId;
 import pa.gob.minsa.sisvigmalariatablero.users.model.Rol;
@@ -55,6 +56,9 @@ public class AdminUsuariosController {
 	private MessageResourceService messageResourceService;
 	@Resource(name="ouService")
 	private OUService ouService;
+	
+	@Resource(name="visitsService")
+	private VisitsService visitsService;
     
     
 	@RequestMapping(value = "/", method = RequestMethod.GET)
@@ -62,6 +66,7 @@ public class AdminUsuariosController {
     	logger.debug("Mostrando Usuarios en JSP");
     	List<UserSistema> usuarios = usuarioService.getUsers();
     	model.addAttribute("usuarios", usuarios);
+    	this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"adminuserspage");
     	return "admin/users/list";
 	}
 	
@@ -77,6 +82,7 @@ public class AdminUsuariosController {
 	    model.addAttribute("roles", roles);
 	    List<Region> regiones = ouService.getRegiones();
 	    model.addAttribute("regiones", regiones);
+	    this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"adminnewuserpage");
 		return "admin/users/newForm";
 	}
     
@@ -106,6 +112,7 @@ public class AdminUsuariosController {
             mav.addObject("rolesusuario", rolesusuario);
             List<Rol> roles = usuarioService.getRolesNoTieneUsuario(username);
             mav.addObject("roles", roles);
+            this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"adminviewuserpage");
         }
         return mav;
     }
@@ -123,6 +130,7 @@ public class AdminUsuariosController {
 			model.addAttribute("user",usuarioEditar);
 			List<Region> regiones = ouService.getRegiones();
 		    model.addAttribute("regiones", regiones);
+		    this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"adminedituserpage");
 			return "admin/users/editForm";
 		}
 		else{
@@ -450,6 +458,7 @@ public class AdminUsuariosController {
     	UserSistema usertoChange = this.usuarioService.getUser(username);
 		if(usertoChange!=null){
 			model.addAttribute("user",usertoChange);
+			this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"adminuserpasspage");
 			return "admin/users/passForm";
 		}
 		else{

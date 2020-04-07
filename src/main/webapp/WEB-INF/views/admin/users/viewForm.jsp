@@ -332,6 +332,75 @@
 			              </div>
 			            </div>
 			            
+			            
+			            <div class="card mb-4" id="viewuser-element-3">
+			              <h6 class="card-header with-elements">
+			                <div class="card-header-title"><i class="fa fa-pen"></i>&nbsp;<strong><spring:message code="audittrail" /></strong></div>
+			              </h6>
+			              <div class="col-md-12 col-lg-12 col-xl-12">
+			                <div class="card-body">
+			                	<table id="lista_cambios" class="table table-striped table-bordered datatable" width="100%">
+					                <thead>
+					                	<tr>
+											<th><spring:message code="entityClass" /></th>
+											<th><spring:message code="entityName" /></th>
+											<th><spring:message code="entityProperty" /></th>
+											<th><spring:message code="entityPropertyOldValue" /></th>
+											<th><spring:message code="entityPropertyNewValue" /></th>
+											<th><spring:message code="modifiedBy" /></th>
+											<th><spring:message code="dateModified" /></th>
+					                	</tr>
+					                </thead>
+					                <tbody>
+									<c:forEach items="${bitacora}" var="cambio">
+										<tr>
+											<td><spring:message code="${cambio.entityClass}" /></td>
+											<td><spring:message code="${cambio.entityName}" /></td>
+											<td><c:out value="${cambio.entityProperty}" /></td>
+											<td><c:out value="${cambio.entityPropertyOldValue}" /></td>
+											<td><c:out value="${cambio.entityPropertyNewValue}" /></td>
+											<td><c:out value="${cambio.username}" /></td>
+											<td><c:out value="${cambio.operationDate}" /></td>
+										</tr>
+									</c:forEach>
+					                </tbody>
+					            </table>
+			                </div>
+			              </div>
+			            </div>
+			            
+			            <div class="card mb-4" id="viewuser-element-4">
+			              <h6 class="card-header with-elements">
+			                <div class="card-header-title"><i class="fa fa-pen"></i>&nbsp;<strong><spring:message code="access" /></strong></div>
+			              </h6>
+			              <div class="col-md-12 col-lg-12 col-xl-12">
+			                <div class="card-body">
+			                	<table id="lista_accesos" class="table table-striped table-bordered datatable" width="100%">
+					                <thead>
+					                	<tr>
+						                    <th class="hidden-xs"><spring:message code="session" /></th>
+											<th class="hidden-xs"><spring:message code="ipaddress" /></th>
+											<th><spring:message code="logindate" /></th>
+											<th><spring:message code="logoutdate" /></th>
+											<th class="hidden-xs"><spring:message code="logouturl" /></th>
+					                	</tr>
+					                </thead>
+					                <tbody>
+					                <c:forEach items="${accesses}" var="acceso">
+										<tr>
+											<td class="hidden-xs"><c:out value="${acceso.sessionId}" /></td>
+											<td class="hidden-xs"><c:out value="${acceso.remoteIpAddress}" /></td>
+											<td><c:out value="${acceso.loginDate}" /></td>
+											<td><c:out value="${acceso.logoutDate}" /></td>
+											<td class="hidden-xs"><c:out value="${acceso.logoutRefererUrl}" /></td>
+										</tr>
+									</c:forEach>
+					                </tbody>
+					            </table>
+			                </div>
+			              </div>
+			            </div>
+			            
          			</div>
          			<!-- / Content -->
          			<jsp:include page="../../fragments/navFooter.jsp" />
@@ -418,6 +487,10 @@
   </spring:url>
   <script src="${validateLang}"></script>
   
+   	<spring:url value="/resources/vendor/libs/datatables/label_{language}.json" var="dataTablesLang">
+ 		<spring:param name="language" value="${lenguaje}" />
+  	</spring:url>
+  
 
   
   <!-- Mensajes -->
@@ -447,6 +520,30 @@
 	    	$("li.usuarios").addClass("open");
 	    	$("li.usuarios").addClass("active");
 	    	$("li.uadmin").addClass("active");
+	    	$('.datatable').DataTable({
+				  dom: 'lBfrtip',
+		          "oLanguage": {
+		              "sUrl": "${dataTablesLang}"
+		          },
+		          "bFilter": true, 
+		          "bInfo": true, 
+		          "bPaginate": true, 
+		          "bDestroy": true,
+		          "responsive": true,
+		          "pageLength": 10,
+		          "bLengthChange": true,
+		          "responsive": true,
+		          "buttons": [
+		              {
+		                  extend: 'excel'
+		              },
+		              {
+		                  extend: 'pdfHtml5',
+		                  orientation: 'portrait',
+		                  pageSize: 'LETTER'
+		              }
+		          ]
+		      });
 	    });
 		
 	  	if ("${usuarioHabilitado}"){
