@@ -361,7 +361,8 @@ return {
 				  ,data[row].paisResidencia,data[row].regionResidencia,data[row].distritoResidencia,data[row].corregimientoResidencia,data[row].localidadResidencia
 				  ,data[row].funcionario,data[row].clave
 				  ,data[row].inv,data[row].clas,data[row].tipoCaso,data[row].origenInf
-				  ,data[row].tx,data[row].ftx,data[row].txcomp,data[row].causaincomp]);
+				  ,data[row].tx,data[row].ftx,data[row].txcomp,data[row].causaincomp
+				  ,data[row].localidadViaje,data[row].focoMuestra,data[row].focoResidencia,data[row].focoInfeccion]);
 		  }
 		  
 		  if(data.length==0){

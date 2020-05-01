@@ -278,6 +278,20 @@ public class SensitiveController {
         		}        		
         		if(caso[35]!=null) mcr.setCausaincomp(caso[35].toString());
         		
+        		if(caso[36]!=null) {
+        			Localidad localidadViaje = this.ouService.getLocalidad(Integer.valueOf(caso[36].toString()));
+        			if(localidadViaje!=null) {
+        				mcr.setLocalidadViaje(localidadViaje.getName());
+        			}
+        			else {
+        				mcr.setLocalidadViaje(caso[36].toString());
+        			}
+        		}
+        		
+        		if(caso[37]!=null) mcr.setFocoMuestra(caso[37].toString());
+        		if(caso[38]!=null) mcr.setFocoResidencia(caso[38].toString());
+        		if(caso[39]!=null) mcr.setFocoInfeccion(caso[39].toString());
+        		
         		casosReporte.add(mcr);
         	}
         }

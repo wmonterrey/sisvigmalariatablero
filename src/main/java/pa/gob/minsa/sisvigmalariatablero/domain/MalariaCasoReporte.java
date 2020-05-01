@@ -44,6 +44,10 @@ public class MalariaCasoReporte{
 	private String ftx;
 	private String txcomp;
 	private String causaincomp;
+	private String localidadViaje;
+	private String focoMuestra;
+	private String focoResidencia;
+	private String focoInfeccion;
 	
 	
 	
@@ -289,5 +293,30 @@ public class MalariaCasoReporte{
 	public void setCausaincomp(String causaincomp) {
 		this.causaincomp = causaincomp;
 	}
+	public String getLocalidadViaje() {
+		return localidadViaje;
+	}
+	public void setLocalidadViaje(String localidadViaje) {
+		this.localidadViaje = localidadViaje;
+	}
+	public String getFocoMuestra() {
+		return focoMuestra;
+	}
+	public void setFocoMuestra(String focoMuestra) {
+		this.focoMuestra = focoMuestra;
+	}
+	public String getFocoResidencia() {
+		return focoResidencia;
+	}
+	public void setFocoResidencia(String focoResidencia) {
+		this.focoResidencia = focoResidencia;
+	}
+	public String getFocoInfeccion() {
+		return focoInfeccion;
+	}
+	public void setFocoInfeccion(String focoInfeccion) {
+		this.focoInfeccion = focoInfeccion;
+	}
+	
 
 }

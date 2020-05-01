@@ -300,6 +300,22 @@ public class ExportController {
         		}        		
         		if(caso[30]!=null) mcr.setCausaincomp(caso[30].toString());
         		
+        		if(caso[31]!=null) {
+        			Localidad localidadViaje = this.ouService.getLocalidad(Integer.valueOf(caso[31].toString()));
+        			if(localidadViaje!=null) {
+        				mcr.setLocalidadViaje(localidadViaje.getName());
+        			}
+        			else {
+        				mcr.setLocalidadViaje(caso[31].toString());
+        			}
+        		}
+        		
+        		if(caso[32]!=null) mcr.setFocoMuestra(caso[32].toString());
+        		if(caso[33]!=null) mcr.setFocoResidencia(caso[33].toString());
+        		if(caso[34]!=null) mcr.setFocoInfeccion(caso[34].toString());
+        		
+        		
+        		
         		casosReporte.add(mcr);
         	}
         }

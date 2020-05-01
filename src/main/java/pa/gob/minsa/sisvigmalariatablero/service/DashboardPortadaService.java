@@ -62,11 +62,15 @@ public class DashboardPortadaService {
 		Calendar c = Calendar.getInstance();
 		if(anio==2018) {
 			c.set(anio, 0, 1, 0, 0, 0); 
-			c.add(Calendar.DATE, -1); //Firt day of epi year
+			//c.add(Calendar.DATE, -1); //Firt day of epi year
 		}
 		else if(anio==2019) {
 			c.set(anio, 0, 1, 0, 0, 0); 
-			c.add(Calendar.DATE, -2);//Firt day of epi year
+			//c.add(Calendar.DATE, -2);//Firt day of epi year
+		}
+		else if(anio==2020) {
+			c.set(anio, 0, 1, 0, 0, 0); 
+			//c.add(Calendar.DATE, -3);//Firt day of epi year
 		}else {
 			c.set(anio, 0, 1, 0, 0, 0); //Firt day of year
 		}
@@ -76,13 +80,13 @@ public class DashboardPortadaService {
 		 */
 		if(timeview.equals("week.samp")) {
 			sqlQueryTiempoVista = "SELECT se.semana";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
 		}else if(timeview.equals("month.samp")) {
-			sqlQueryTiempoVista = "SELECT month(mc.pdrfecha)";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoVista = "SELECT month(CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END)";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
 		}else if(timeview.equals("day.samp")) {
-			sqlQueryTiempoVista = "SELECT mc.pdrfecha";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoVista = "SELECT CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
 		}
 		
 		if(oulevel.equals("ALL")) {
@@ -214,6 +218,10 @@ public class DashboardPortadaService {
 		else if(anio==2019) {
 			c.set(anio, 0, 1, 0, 0, 0); 
 			c.add(Calendar.DATE, -2);//Firt day of epi year
+		}
+		else if(anio==2020) {
+			c.set(anio, 0, 1, 0, 0, 0); 
+			c.add(Calendar.DATE, -3);//Firt day of epi year
 		}else {
 			c.set(anio, 0, 1, 0, 0, 0); //Firt day of year
 		}
@@ -334,13 +342,13 @@ public class DashboardPortadaService {
 		 */
 		if(timeview.equals("week.samp")) {
 			sqlQueryTiempoVista = "SELECT se.semana";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
 		}else if(timeview.equals("month.samp")) {
-			sqlQueryTiempoVista = "SELECT month(mc.pdrfecha)";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoVista = "SELECT month(CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END)";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
 		}else if(timeview.equals("day.samp")) {
-			sqlQueryTiempoVista = "SELECT mc.pdrfecha";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoVista = "SELECT CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
 		}
 		//Pais
 		if(oulevel.equals("ALL")) {
@@ -495,13 +503,13 @@ public class DashboardPortadaService {
 		
 		if(timeview.equals("week.samp")) {
 			sqlQueryTiempoVista = "SELECT mc.pdrMuestraLocalidad.ident ";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
 		}else if(timeview.equals("month.samp")) {
 			sqlQueryTiempoVista = "SELECT mc.pdrMuestraLocalidad.ident ";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
 		}else if(timeview.equals("day.samp")) {
 			sqlQueryTiempoVista = "SELECT mc.pdrMuestraLocalidad.ident ";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
 		}
 		//Pais
 		if(oulevel.equals("ALL")) {
@@ -570,7 +578,7 @@ public class DashboardPortadaService {
 				localidadesHistoricas.add(otraloc);
 			}
 		}
-		
+			
 		//Regresa muestras historicas mas SISVIG
 		return localidadesHistoricas.size();
 		
@@ -598,28 +606,28 @@ public class DashboardPortadaService {
 		
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.distrito.region.name, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
 			sqlQueryRegionWhere="";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.distrito.region.name";
 		}
 		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.distrito.name, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.ident =:ouname ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.distrito.name";
 		}
 		//Por Provincia
 		else if(oulevel.equals("province.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.distrito.name, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.provincia.ident =:ouname ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.distrito.name";
 		}
 		//Por Distrito
 		else if(oulevel.equals("district.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.name, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.ident =:ouname ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.name";
 		}
@@ -633,14 +641,14 @@ public class DashboardPortadaService {
 		//Por localidad
 		else if(oulevel.equals("local.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.name, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.ident =:ouname ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.name";
 		}
 		//Por foco
 		else if(oulevel.equals("foci.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.name, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.ident in (select fl.focoLocalidadId.localidad from FocoLocalidad fl where fl.focoLocalidadId.foco=:ouname and fl.pasive = '0') ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.name";
 		}

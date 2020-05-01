@@ -167,6 +167,10 @@
 					                		<th>fecha inicio tx</th>
 					                		<th>tx completo</th>
 					                		<th>causa susp</th>
+					                		<th>Localidad viaje</th>
+					                		<th>Foco Muestra</th>
+					                		<th>Foco Residencia</th>
+					                		<th>Foco Infeccion</th>
 					                	</tr>
 					                </thead>
 					                <tbody>
