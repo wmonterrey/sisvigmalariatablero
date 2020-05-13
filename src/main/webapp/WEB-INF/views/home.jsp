@@ -106,7 +106,7 @@
 			            <div class="row">
 			              <div class="col-sm-6 col-xl-4">
 			
-			                <div class="card mb-4">
+			                <div class="card mb-4" id="confirmed-number">
 			                  <div class="card-body">
 			                    <div class="d-flex align-items-center">
 			                      <div class="lnr lnr-cross-circle display-4 text-danger"></div>
@@ -121,7 +121,7 @@
 			              </div>
 			              <div class="col-sm-6 col-xl-4">
 			
-			                <div class="card mb-4">
+			                <div class="card mb-4" id="samples-number">
 			                  <div class="card-body">
 			                    <div class="d-flex align-items-center">
 			                      <div class="lnr lnr-book display-4 text-info"></div>
@@ -136,7 +136,7 @@
 			              </div>
 			              <div class="col-sm-6 col-xl-4">
 			
-			                <div class="card mb-4">
+			                <div class="card mb-4" id="localities-number">
 			                  <div class="card-body">
 			                    <div class="d-flex align-items-center">
 			                      <div class="lnr lnr-map display-4 text-success"></div>

@@ -1,5 +1,8 @@
 package pa.gob.minsa.sisvigmalariatablero.service;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,7 +139,7 @@ public class DashboardEpidemiologiaService {
 		
 		//Datos de sisvig desde 2018
 		query = session.createQuery("SELECT se.semana, se.anio, count(se.semana) as total "
-				+ " FROM MalariaCaso mc, SemanaEpidemiologica se where se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio>=:anio and mc.estado=:estado and mc.eliminado=:eliminado "
+				+ " FROM MalariaCaso mc, SemanaEpidemiologica se where se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio>=:anio and mc.estado=:estado and mc.eliminado=:eliminado "
 				+ sqlQueryRegionWhere + " group by se.semana, se.anio");
 		
 		query.setParameter("anio", 2018);
@@ -205,6 +208,17 @@ public class DashboardEpidemiologiaService {
 		
 		
 		//Datos de SISVIG anio seleccionado
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Long desde = null;
+        Long hasta = null;
+        
+        try {
+        	desde = formatter.parse(anio+"-01-01").getTime();
+			hasta = formatter.parse(anio+"-12-31").getTime();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionWhere="";
 		}
@@ -235,10 +249,13 @@ public class DashboardEpidemiologiaService {
 		//Datos de sisvig actual
 
 		query = session.createQuery("SELECT se.semana, se.anio, count(se.semana) as total "
-				+ " FROM MalariaCaso mc, SemanaEpidemiologica se where se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio and mc.estado=:estado and mc.eliminado=:eliminado "
+				+ " FROM MalariaCaso mc, SemanaEpidemiologica se where se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal and mc.estado=:estado and mc.eliminado=:eliminado "
 				+ sqlQueryRegionWhere + " group by se.semana, se.anio");
 		
-		query.setParameter("anio", anio);
+		Timestamp timeStampInicio = new Timestamp(desde);
+		Timestamp timeStampFinal = new Timestamp(hasta);
+		query.setTimestamp("fechaInicio", timeStampInicio);
+		query.setTimestamp("fechaFinal", timeStampFinal);
 		query.setParameter("eliminado", false);
 		query.setParameter("estado", "confirmado");
 		resultadosSisvig.clear();
@@ -400,7 +417,7 @@ public class DashboardEpidemiologiaService {
 		}			
 		
 		//Datos de sisvig desde 2018
-		query = session.createQuery("SELECT se.anio, count(se.anio) as total, "
+		query = session.createQuery("SELECT year(CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END) as anio, count(anio) as total, "
 				+ " SUM( CASE mc.tipoBusqueda WHEN 'activa' THEN 1 ELSE 0 END ) AS Activa, "
 				+ " SUM( CASE mc.tipoBusqueda WHEN 'pasiva' THEN 1 ELSE 0 END ) AS Pasiva, "
 				+ " SUM( CASE mc.tipoBusqueda WHEN 'reactiva' THEN 1 ELSE 0 END ) AS Reactiva, "
@@ -414,8 +431,8 @@ public class DashboardEpidemiologiaService {
 				+ " -SUM( CASE WHEN CASE WHEN mc.labPlasmodium IS NOT NULL then mc.labPlasmodium ELSE mc.pdrParasito END = 15 THEN 1 ELSE 0 END) "
 				+ " -SUM( CASE WHEN CASE WHEN mc.labPlasmodium IS NOT NULL then mc.labPlasmodium ELSE mc.pdrParasito END IS NULL THEN 1 ELSE 0 END) AS Otro, "
 				+ " SUM( CASE WHEN CASE WHEN mc.labPlasmodium IS NOT NULL then mc.labPlasmodium ELSE mc.pdrParasito END IS NULL THEN 1 ELSE 0 END) AS SDE "
-				+ " FROM MalariaCaso mc, SemanaEpidemiologica se where se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio>=:anio and mc.estado=:estado and mc.eliminado=:eliminado "
-				+ sqlQueryRegionWhere + " group by se.anio");
+				+ " FROM MalariaCaso mc, SemanaEpidemiologica se where se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and year(CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END)>=:anio and mc.estado=:estado and mc.eliminado=:eliminado "
+				+ sqlQueryRegionWhere + " group by year(CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END)");
 		
 		query.setParameter("anio", 2018);
 		query.setParameter("eliminado", false);
@@ -471,6 +488,18 @@ public class DashboardEpidemiologiaService {
 		String sqlQueryTiempoWhere = "";
 		String sqlQueryRegionWhere = "";
 		String sqlQueryGroupBY = "";
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		
+		Long desde = null;
+        Long hasta = null;
+        
+        try {
+        	desde = formatter.parse(anio+"-01-01").getTime();
+			hasta = formatter.parse(anio+"-12-31").getTime();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		/**
 		 * Regresa datos de positivos de SISVIG
@@ -479,7 +508,7 @@ public class DashboardEpidemiologiaService {
 		
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.distrito.provincia.ident, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 			sqlQueryRegionWhere="";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.distrito.provincia.ident";
 		}
@@ -487,14 +516,14 @@ public class DashboardEpidemiologiaService {
 		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.distrito.ident, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.ident =:ouname ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.distrito.ident";
 		}
 		//Por Provincia
 		else if(oulevel.equals("province.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.distrito.ident, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.provincia.ident =:ouname ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.distrito.ident";
 		}	
@@ -502,7 +531,7 @@ public class DashboardEpidemiologiaService {
 		//Por Distrito
 		else if(oulevel.equals("district.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.ident, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.ident =:ouname ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.ident";
 		}
@@ -517,7 +546,10 @@ public class DashboardEpidemiologiaService {
 		Query query = session.createQuery(sqlQueryRegionVista 
 				+ " FROM MalariaCaso mc, SemanaEpidemiologica se where " + sqlQueryTiempoWhere + sqlQueryRegionWhere
 				+ " and mc.eliminado=:eliminado and mc.estado=:estado " + sqlQueryGroupBY);
-		query.setParameter("anio", anio);
+		Timestamp timeStampInicio = new Timestamp(desde);
+		Timestamp timeStampFinal = new Timestamp(hasta);
+		query.setTimestamp("fechaInicio", timeStampInicio);
+		query.setTimestamp("fechaFinal", timeStampFinal);
 		query.setParameter("eliminado", false);
 		query.setParameter("estado", "confirmado");
 		

@@ -254,7 +254,7 @@ return {
 	  
   //Grafico de casos confirmados por semana
   function casosxSemana (){
-	  $('#confirmed-element').block({
+	  $('#confirmed-element,#confirmed-number').block({
 	      message: '<div class="sk-wave sk-primary"><div class="sk-rect sk-rect1"></div> <div class="sk-rect sk-rect2"></div> <div class="sk-rect sk-rect3"></div> <div class="sk-rect sk-rect4"></div> <div class="sk-rect sk-rect5"></div></div>',
 	      css: {
 	        backgroundColor: 'transparent',
@@ -363,18 +363,18 @@ return {
 		    }
 		  });
 		  chart1.resize();
-		  $('#confirmed-element').unblock();
+		  $('#confirmed-element,#confirmed-number').unblock();
 	  })
 	  .fail(function() {
 		  alert( "error" );
-		  $('#confirmed-element').unblock();
+		  $('#confirmed-element,#confirmed-number').unblock();
 	  });
   }
   
   
 //Grafico de muestras por semana
   function muestrasxSemana (){
-	  $('#samples-element').block({
+	  $('#samples-element,#samples-number').block({
 	      message: '<div class="sk-wave sk-primary"><div class="sk-rect sk-rect1"></div> <div class="sk-rect sk-rect2"></div> <div class="sk-rect sk-rect3"></div> <div class="sk-rect sk-rect4"></div> <div class="sk-rect sk-rect5"></div></div>',
 	      css: {
 	        backgroundColor: 'transparent',
@@ -482,11 +482,11 @@ return {
 		    }
 		  });
 		  chart2.resize();
-		  $('#samples-element').unblock();
+		  $('#samples-element,#samples-number').unblock();
 	  })
 	  .fail(function() {
 		  alert( "error" );
-		  $('#samples-element').unblock();
+		  $('#samples-element,#samples-number').unblock();
 	  });
   }
   
@@ -670,11 +670,24 @@ return {
   
   //Total de localidades con busqueda
   function locBusq (){
+	  $('#localities-number').block({
+	      message: '<div class="sk-wave sk-primary"><div class="sk-rect sk-rect1"></div> <div class="sk-rect sk-rect2"></div> <div class="sk-rect sk-rect3"></div> <div class="sk-rect sk-rect4"></div> <div class="sk-rect sk-rect5"></div></div>',
+	      css: {
+	        backgroundColor: 'transparent',
+	        border: '0'
+	      },
+	      overlayCSS:  {
+	        backgroundColor: '#fff',
+	        opacity: 0.8
+	      }
+	    });
 	  $.getJSON(parametros.locbusqUrl, $('#filters-form').serialize(), function(data) {
 		  $('#localities').html(data);
+		  $('#localities-number').unblock();
 	  })
 	  .fail(function() {
 		  alert( data );
+		  $('#localities-number').unblock();
 	  });
 	  
   }

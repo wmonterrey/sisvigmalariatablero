@@ -1,5 +1,7 @@
 package pa.gob.minsa.sisvigmalariatablero.service;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,36 +59,33 @@ public class DashboardPortadaService {
 		String sqlQueryTiempoVista = "";
 		String sqlQueryTiempoWhere = "";
 		String sqlQueryRegionWhere = "";
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		//Inicializa calendario
-		Calendar c = Calendar.getInstance();
-		if(anio==2018) {
-			c.set(anio, 0, 1, 0, 0, 0); 
-			//c.add(Calendar.DATE, -1); //Firt day of epi year
-		}
-		else if(anio==2019) {
-			c.set(anio, 0, 1, 0, 0, 0); 
-			//c.add(Calendar.DATE, -2);//Firt day of epi year
-		}
-		else if(anio==2020) {
-			c.set(anio, 0, 1, 0, 0, 0); 
-			//c.add(Calendar.DATE, -3);//Firt day of epi year
-		}else {
-			c.set(anio, 0, 1, 0, 0, 0); //Firt day of year
-		}
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
 		/**
 		 * Regresa datos de positivos de SISVIG
 		 * 
 		 */
+		Long desde = null;
+        Long hasta = null;
+        
+        try {
+        	desde = formatter.parse(anio+"-01-01").getTime();
+			hasta = formatter.parse(anio+"-12-31").getTime();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        
 		if(timeview.equals("week.samp")) {
 			sqlQueryTiempoVista = "SELECT se.semana";
-			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 		}else if(timeview.equals("month.samp")) {
 			sqlQueryTiempoVista = "SELECT month(CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END)";
-			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 		}else if(timeview.equals("day.samp")) {
 			sqlQueryTiempoVista = "SELECT CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END";
-			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 		}
 		
 		if(oulevel.equals("ALL")) {
@@ -124,7 +123,10 @@ public class DashboardPortadaService {
 		Query query = session.createQuery(sqlQueryTiempoVista 
 				+ " FROM MalariaCaso mc, SemanaEpidemiologica se where " + sqlQueryTiempoWhere + sqlQueryRegionWhere
 				+ " and mc.eliminado=:eliminado and mc.estado=:estado ");
-		query.setParameter("anio", anio);
+		Timestamp timeStampInicio = new Timestamp(desde);
+		Timestamp timeStampFinal = new Timestamp(hasta);
+		query.setTimestamp("fechaInicio", timeStampInicio);
+		query.setTimestamp("fechaFinal", timeStampFinal);
 		query.setParameter("eliminado", false);
 		query.setParameter("estado", "confirmado");
 		
@@ -171,8 +173,11 @@ public class DashboardPortadaService {
 		}
 		//Si quiere verse por dia inicializar la lista
 		else if(timeview.equals("day.samp")) {
+			//Inicializa calendario
+			Calendar c = Calendar.getInstance();
+			c.set(anio, 0, 1, 0, 0, 0);
 			for (int i = 0 ; i < 367 ; i++){
-				DatosTiempo dato = new DatosTiempo(sdf.format(c.getTime()),anio,0,0,0);
+				DatosTiempo dato = new DatosTiempo(formatter.format(c.getTime()),anio,0,0,0);
 				resultadoF.add(dato);
 				c.add(Calendar.DATE, 1);
 			}
@@ -205,26 +210,20 @@ public class DashboardPortadaService {
 		String sqlQueryRegionWhere = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		
+		Long desde = null;
+        Long hasta = null;
+        
+        try {
+        	desde = sdf.parse(anio+"-01-01").getTime();
+			hasta = sdf.parse(anio+"-12-31").getTime();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		// Retrieve session from Hibernate
 		Session session = sessionFactory.getCurrentSession();
 		Query query;
-		
-		//Inicializa calendario
-		Calendar c = Calendar.getInstance();
-		if(anio==2018) {
-			c.set(anio, 0, 1, 0, 0, 0); 
-			c.add(Calendar.DATE, -1); //Firt day of epi year
-		}
-		else if(anio==2019) {
-			c.set(anio, 0, 1, 0, 0, 0); 
-			c.add(Calendar.DATE, -2);//Firt day of epi year
-		}
-		else if(anio==2020) {
-			c.set(anio, 0, 1, 0, 0, 0); 
-			c.add(Calendar.DATE, -3);//Firt day of epi year
-		}else {
-			c.set(anio, 0, 1, 0, 0, 0); //Firt day of year
-		}
 		
 		/**
 		 * Regresa datos de muestras historicos
@@ -233,13 +232,13 @@ public class DashboardPortadaService {
 		//Define en el query la vista de tiempo
 		if(timeview.equals("week.samp")) {
 			sqlQueryTiempoVista = "SELECT se.semana";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.fecha and se.fechaFin >= mc.fecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= mc.fecha and se.fechaFin >= mc.fecha and mc.fecha between :fechaInicio and :fechaFinal";
 		}else if(timeview.equals("month.samp")) {
 			sqlQueryTiempoVista = "SELECT month(mc.fecha)";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.fecha and se.fechaFin >= mc.fecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= mc.fecha and se.fechaFin >= mc.fecha and mc.fecha between :fechaInicio and :fechaFinal";
 		}else if(timeview.equals("day.samp")) {
 			sqlQueryTiempoVista = "SELECT mc.fecha";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.fecha and se.fechaFin >= mc.fecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= mc.fecha and se.fechaFin >= mc.fecha and mc.fecha between :fechaInicio and :fechaFinal";
 		}
 		//Pais
 		if(oulevel.equals("ALL")) {
@@ -275,7 +274,12 @@ public class DashboardPortadaService {
 		query = session.createQuery(sqlQueryTiempoVista 
 				+ " FROM Muestras mc, SemanaEpidemiologica se where " + sqlQueryTiempoWhere + sqlQueryRegionWhere
 				+ " )");
-		query.setParameter("anio", anio);
+		
+		Timestamp timeStampInicio = new Timestamp(desde);
+		Timestamp timeStampFinal = new Timestamp(hasta);
+		query.setTimestamp("fechaInicio", timeStampInicio);
+		query.setTimestamp("fechaFinal", timeStampFinal);
+		
 		//Parametro region
 		if(oulevel.equals("region.samp")) {
 			query.setParameter("ouname", Integer.valueOf(ouname));
@@ -319,6 +323,9 @@ public class DashboardPortadaService {
 		}
 		//Si quiere verse por dia inicializar la lista
 		else if(timeview.equals("day.samp")) {
+			//Inicializa calendario
+			Calendar c = Calendar.getInstance();
+			c.set(anio, 0, 1, 0, 0, 0);
 			for (int i = 0 ; i < 367 ; i++){
 				DatosTiempo dato = new DatosTiempo(sdf.format(c.getTime()),anio,0,0,0);
 				resultadoF.add(dato);
@@ -342,13 +349,13 @@ public class DashboardPortadaService {
 		 */
 		if(timeview.equals("week.samp")) {
 			sqlQueryTiempoVista = "SELECT se.semana";
-			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 		}else if(timeview.equals("month.samp")) {
 			sqlQueryTiempoVista = "SELECT month(CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END)";
-			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 		}else if(timeview.equals("day.samp")) {
 			sqlQueryTiempoVista = "SELECT CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END";
-			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 		}
 		//Pais
 		if(oulevel.equals("ALL")) {
@@ -383,7 +390,8 @@ public class DashboardPortadaService {
 		query = session.createQuery(sqlQueryTiempoVista 
 				+ " FROM MalariaCaso mc, SemanaEpidemiologica se where " + sqlQueryTiempoWhere + sqlQueryRegionWhere
 				+ " and mc.eliminado=:eliminado and (mc.pruebaRapida=1 or mc.labResultado is not null)");
-		query.setParameter("anio", anio);
+		query.setTimestamp("fechaInicio", timeStampInicio);
+		query.setTimestamp("fechaFinal", timeStampFinal);
 		query.setParameter("eliminado", false);
 		
 		//Parametro region
@@ -438,7 +446,17 @@ public class DashboardPortadaService {
 		List<Integer> localidadesHistoricas = new ArrayList<Integer>();
 		List<Integer> localidadesSisvig = new ArrayList<Integer>();
 		Session session = sessionFactory.getCurrentSession();
-		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Long desde = null;
+        Long hasta = null;
+        
+        try {
+        	desde = formatter.parse(anio+"-01-01").getTime();
+			hasta = formatter.parse(anio+"-12-31").getTime();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//Muestras historicas
 		//Pais
 		if(oulevel.equals("ALL")) {
@@ -503,13 +521,13 @@ public class DashboardPortadaService {
 		
 		if(timeview.equals("week.samp")) {
 			sqlQueryTiempoVista = "SELECT mc.pdrMuestraLocalidad.ident ";
-			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 		}else if(timeview.equals("month.samp")) {
 			sqlQueryTiempoVista = "SELECT mc.pdrMuestraLocalidad.ident ";
-			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 		}else if(timeview.equals("day.samp")) {
 			sqlQueryTiempoVista = "SELECT mc.pdrMuestraLocalidad.ident ";
-			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 		}
 		//Pais
 		if(oulevel.equals("ALL")) {
@@ -543,7 +561,10 @@ public class DashboardPortadaService {
 		query = session.createQuery(sqlQueryTiempoVista 
 				+ " FROM MalariaCaso mc, SemanaEpidemiologica se where " + sqlQueryTiempoWhere + sqlQueryRegionWhere
 				+ " and mc.eliminado=:eliminado and (mc.pruebaRapida=1 or mc.labResultado is not null) group by mc.pdrMuestraLocalidad.ident");
-		query.setParameter("anio", anio);
+		Timestamp timeStampInicio = new Timestamp(desde);
+		Timestamp timeStampFinal = new Timestamp(hasta);
+		query.setTimestamp("fechaInicio", timeStampInicio);
+		query.setTimestamp("fechaFinal", timeStampFinal);
 		query.setParameter("eliminado", false);
 		//Parametro region
 		if(oulevel.equals("region.samp")) {
@@ -599,35 +620,47 @@ public class DashboardPortadaService {
 		String sqlQueryRegionWhere = "";
 		String sqlQueryGroupBY = "";
 		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
 		/**
 		 * Regresa datos de positivos de SISVIG
 		 * 
 		 */
+		Long desde = null;
+        Long hasta = null;
+        
+        try {
+        	desde = formatter.parse(anio+"-01-01").getTime();
+			hasta = formatter.parse(anio+"-12-31").getTime();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		if(oulevel.equals("ALL")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.distrito.region.name, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 			sqlQueryRegionWhere="";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.distrito.region.name";
 		}
 		//Por region
 		else if(oulevel.equals("region.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.distrito.name, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.region.ident =:ouname ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.distrito.name";
 		}
 		//Por Provincia
 		else if(oulevel.equals("province.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.distrito.name, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.provincia.ident =:ouname ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.distrito.name";
 		}
 		//Por Distrito
 		else if(oulevel.equals("district.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.name, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.distrito.ident =:ouname ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.name";
 		}
@@ -660,7 +693,10 @@ public class DashboardPortadaService {
 		Query query = session.createQuery(sqlQueryRegionVista 
 				+ " FROM MalariaCaso mc, SemanaEpidemiologica se where " + sqlQueryTiempoWhere + sqlQueryRegionWhere
 				+ " and mc.eliminado=:eliminado and mc.estado=:estado " + sqlQueryGroupBY);
-		query.setParameter("anio", anio);
+		Timestamp timeStampInicio = new Timestamp(desde);
+		Timestamp timeStampFinal = new Timestamp(hasta);
+		query.setTimestamp("fechaInicio", timeStampInicio);
+		query.setTimestamp("fechaFinal", timeStampFinal);
 		query.setParameter("eliminado", false);
 		query.setParameter("estado", "confirmado");
 		

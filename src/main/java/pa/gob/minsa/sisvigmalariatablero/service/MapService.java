@@ -50,7 +50,7 @@ public class MapService {
 		Query query;
 		
 		sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.distrito.region.ident, count(mc.id)";
-		sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and mc.pdrfecha between :fechaInicio and :fechaFinal";
+		sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 		sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.distrito.region.ident";
 		Timestamp timeStampInicio = new Timestamp(desde);
 		Timestamp timeStampFinal = new Timestamp(hasta);
@@ -68,7 +68,7 @@ public class MapService {
 		resultadosTotales.add(query.list());
 		
 		sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.distrito.ident, count(mc.id)";
-		sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and mc.pdrfecha between :fechaInicio and :fechaFinal";
+		sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 		sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.distrito.ident";
 		
 		
@@ -85,7 +85,7 @@ public class MapService {
 		resultadosTotales.add(query.list());
 		
 		sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.corregimiento.ident, count(mc.id)";
-		sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and mc.pdrfecha between :fechaInicio and :fechaFinal";
+		sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 		sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.corregimiento.ident";
 		
 		
@@ -102,7 +102,7 @@ public class MapService {
 		resultadosTotales.add(query.list());
 		
 		sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.ident, count(mc.id)";
-		sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and mc.pdrfecha between :fechaInicio and :fechaFinal";
+		sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 		sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.ident";
 		
 		
