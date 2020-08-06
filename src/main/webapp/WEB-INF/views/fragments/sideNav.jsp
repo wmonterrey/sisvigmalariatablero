@@ -75,6 +75,13 @@
               </li>
               
             </ul>
+            <ul class="sidenav-menu">
+              <li class="sidenav-item uactiv">
+                <a href="<spring:url value="/admin/users/activity/" htmlEscape="true "/>" class="sidenav-link">
+                  <div><spring:message code="activity" /></div>
+                </a>
+              </li>
+            </ul>
             </sec:authorize>
         </li>
         <sec:authorize url="/admin/">

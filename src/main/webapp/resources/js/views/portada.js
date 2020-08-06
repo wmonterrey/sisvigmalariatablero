@@ -254,7 +254,7 @@ return {
 	  
   //Grafico de casos confirmados por semana
   function casosxSemana (){
-	  $('#confirmed-element,#confirmed-number').block({
+	  $('#confirmed-element,#confirmed-number,#confirmed-element-2').block({
 	      message: '<div class="sk-wave sk-primary"><div class="sk-rect sk-rect1"></div> <div class="sk-rect sk-rect2"></div> <div class="sk-rect sk-rect3"></div> <div class="sk-rect sk-rect4"></div> <div class="sk-rect sk-rect5"></div></div>',
 	      css: {
 	        backgroundColor: 'transparent',
@@ -283,6 +283,8 @@ return {
 	        	    { "title": $('#timeview').select2('data')[0].text },
 	        	    null,
 	        	    null,
+	        	    null,
+	        	    null,
 	        	    null
 	        	  ],
 	          "buttons": [
@@ -296,85 +298,110 @@ return {
 	              }
 	          ]
 	      });
-		  table1.clear().draw();
+		  
 		  var semanas = [];
 		  var casos = [];
+		  var casos2 = [];
 		  var totalCasos = 0;
 		  var region = "";
 		  
-		  $('#labelConfirmed').html(parametros.casos + ' ' + $('#anio').val());
+		  $('#labelConfirmed').html(parametros.casos);
 		  if($('#oulevel').val()=="ALL"){
 			  region = $('#oulevel').select2('data')[0].text;
-			  $('#labelChart1Title').html(parametros.casos + ' ' + $('#anio').val());
-			  $('#labelTable1Title').html(parametros.casos + ' ' + $('#anio').val());
+			  $('#labelChart1Title').html(parametros.casos);
+			  $('#labelTable1Title').html(parametros.casos);
 		  }
 		  else{
 			  region = $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text;
-			  $('#labelChart1Title').html(parametros.casos + ', ' + $('#anio').val()+ ' ' + $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
-			  $('#labelTable1Title').html(parametros.casos + ', ' + $('#anio').val()+ ' ' + $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
+			  $('#labelChart1Title').html(parametros.casos + ', ' +  $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
+			  $('#labelTable1Title').html(parametros.casos + ', ' +  $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
 		  }
 		  
 		  
-		  for (var row in data) {
-			  semanas.push([data[row].periodo]);
-			  casos.push([data[row].dato1]);
-			  totalCasos = totalCasos + data[row].dato1;
-			  table1.row.add([data[row].periodo, $('#anio').val(), data[row].dato1, region]);
+		  for (var row in data[0]) {
+			  semanas.push([data[0][row].periodo]);
+			  casos.push([data[0][row].dato1]);
+			  totalCasos = totalCasos + data[0][row].dato1;
+			  
+		  }
+		  
+		  for (var row in data[1]) {
+			  casos2.push([data[1][row].dato1]);
+			  //table1.row.add([data[0][row].periodo, $('#anio').val(), data[0][row].dato1, region]);
+		  }
+		  
+		  table1.clear().draw();
+		  for(i=0;i<semanas.length;i++){
+			  table1.row.add([semanas[i], $('#anio').val(), casos[i], $('#anio').val()-1, casos2[i], region]);
 		  }
 		  
 		  $('#confirmed').html(totalCasos);
 		  chart1.destroy();
 		  chart1 = new Chart(document.getElementById('confirmed-cases-chart').getContext("2d"), {
-		    type: 'bar',
+		    type: 'line',
 		    data: {
 		      labels: semanas,
 		      datasets: [{
-		        label: parametros.casos,
+		        label: $('#anio').val(),
+		        fill: false,
 		        data: casos,
-		        borderWidth: 1,
 		        backgroundColor: 'rgba(28,180,255,.05)',
 		        borderColor: 'rgba(28,180,255,1)'
+		      },{
+		    	label: $('#anio').val()-1,
+		    	fill: false,
+		        data: casos2,
+		        backgroundColor: 'rgba(28,180,255,.05)',
+		        borderColor: 'rgba(255,0,0,1)' 
 		      }],
 		    },
 		    options: {
-		      scales: {
-		        xAxes: [{
-		          gridLines: {
-		            display: false
-		          },
-		          ticks: {
-		            fontColor: '#aaa'
-		          }
-		        }],
-		        yAxes: [{
-		          gridLines: {
-		            display: false
-		          },
-		          ticks: {
-		            fontColor: '#aaa',
-		            beginAtZero: true,
-		            precision:0
-		          }
-		        }]
-		      },
-		
-		      responsive: false,
-		      maintainAspectRatio: false
-		    }
+		    	tooltips: {
+					mode: 'index',
+					intersect: false,
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+			      scales: {
+			        xAxes: [{
+			          gridLines: {
+			            display: false
+			          },
+			          ticks: {
+			            fontColor: '#aaa'
+			          }
+			        }],
+			        yAxes: [{
+			          gridLines: {
+			            display: false
+			          },
+			          ticks: {
+			            fontColor: '#aaa',
+			            beginAtZero: true,
+			            precision:0
+			          }
+			        }]
+			      },
+			
+			      responsive: false,
+			      maintainAspectRatio: false
+			    }
 		  });
 		  chart1.resize();
-		  $('#confirmed-element,#confirmed-number').unblock();
+		  $('#confirmed-element,#confirmed-number,#confirmed-element-2').unblock();
 	  })
 	  .fail(function() {
 		  alert( "error" );
-		  $('#confirmed-element,#confirmed-number').unblock();
+		  $('#confirmed-element,#confirmed-number,#confirmed-element-2').unblock();
 	  });
   }
   
   
 //Grafico de muestras por semana
   function muestrasxSemana (){
-	  $('#samples-element,#samples-number').block({
+	  $('#samples-element,#samples-number,#samples-element-2').block({
 	      message: '<div class="sk-wave sk-primary"><div class="sk-rect sk-rect1"></div> <div class="sk-rect sk-rect2"></div> <div class="sk-rect sk-rect3"></div> <div class="sk-rect sk-rect4"></div> <div class="sk-rect sk-rect5"></div></div>',
 	      css: {
 	        backgroundColor: 'transparent',
@@ -403,6 +430,8 @@ return {
 	        	    { "title":$('#timeview').select2('data')[0].text},
 	        	    null,
 	        	    null,
+	        	    null,
+	        	    null,
 	        	    null
 	        	  ],
 	          "buttons": [
@@ -416,77 +445,102 @@ return {
 	              }
 	          ]
 	      });
-		  table2.clear().draw();
+		  
 		  var semanas = [];
 		  var casos = [];
+		  var casos2 = [];
 		  var totalCasos = 0;
 		  var region = "";
 		  
 		  if($('#oulevel').val()=="ALL"){
 			  region = $('#oulevel').select2('data')[0].text;
-			  $('#labelChart2Title').html(parametros.muestras + ' ' + $('#anio').val());
-			  $('#labelTable2Title').html(parametros.muestras + ' ' + $('#anio').val());
+			  $('#labelChart2Title').html(parametros.muestras);
+			  $('#labelTable2Title').html(parametros.muestras);
 		  }
 		  else{
 			  region = $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text;
-			  $('#labelChart2Title').html(parametros.muestras + ', ' + $('#anio').val()+ ' ' + $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
-			  $('#labelTable2Title').html(parametros.muestras + ', ' + $('#anio').val()+ ' ' + $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
+			  $('#labelChart2Title').html(parametros.muestras + ', ' + $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
+			  $('#labelTable2Title').html(parametros.muestras + ', ' + $('#oulevel').select2('data')[0].text+ ': ' + $('#ouname').select2('data')[0].text);
 		  }
 		  
-		  for (var row in data) {
-			  semanas.push([data[row].periodo]);
-			  casos.push([data[row].dato1]);
-			  totalCasos = totalCasos + data[row].dato1;
-			  table2.row.add([data[row].periodo, $('#anio').val(), data[row].dato1, region]);
+		  
+		  for (var row in data[0]) {
+			  semanas.push([data[0][row].periodo]);
+			  casos.push([data[0][row].dato1]);
+			  totalCasos = totalCasos + data[0][row].dato1;
+			  
+		  }
+		  
+		  for (var row in data[1]) {
+			  casos2.push([data[1][row].dato1]);
+		  }
+		  
+		  table2.clear().draw();
+		  for(i=0;i<semanas.length;i++){
+			  table2.row.add([semanas[i], $('#anio').val(), casos[i], $('#anio').val()-1, casos2[i], region]);
 		  }
 		  
 
 		  $('#samples').html(totalCasos);
 		  chart2.destroy();
 		  chart2 = new Chart(document.getElementById('samples-chart').getContext("2d"), {
-		    type: 'bar',
-		    data: {
-		      labels: semanas,
-		      datasets: [{
-		        label: parametros.muestras,
-		        data: casos,
-		        borderWidth: 1,
-		        backgroundColor: 'rgba(28,180,255,.05)',
-		        borderColor: 'rgba(28,180,255,1)'
-		      }],
-		    },
-		    options: {
-		      scales: {
-		        xAxes: [{
-		          gridLines: {
-		            display: false
-		          },
-		          ticks: {
-		            fontColor: '#aaa'
-		          }
-		        }],
-		        yAxes: [{
-		          gridLines: {
-		            display: false
-		          },
-		          ticks: {
-		            fontColor: '#aaa',
-		            beginAtZero: true,
-		            precision:0
-		          }
-		        }]
-		      },
-		
-		      responsive: false,
-		      maintainAspectRatio: false
-		    }
+			  type: 'line',
+			    data: {
+			      labels: semanas,
+			      datasets: [{
+			        label: $('#anio').val(),
+			        fill: false,
+			        data: casos,
+			        backgroundColor: 'rgba(28,180,255,.05)',
+			        borderColor: 'rgba(28,180,255,1)'
+			      },{
+			    	label: $('#anio').val()-1,
+			    	fill: false,
+			        data: casos2,
+			        backgroundColor: 'rgba(28,180,255,.05)',
+			        borderColor: 'rgba(255,0,0,1)' 
+			      }],
+			    },
+			    options: {
+			    	tooltips: {
+						mode: 'index',
+						intersect: false,
+					},
+					hover: {
+						mode: 'nearest',
+						intersect: true
+					},
+				      scales: {
+				        xAxes: [{
+				          gridLines: {
+				            display: false
+				          },
+				          ticks: {
+				            fontColor: '#aaa'
+				          }
+				        }],
+				        yAxes: [{
+				          gridLines: {
+				            display: false
+				          },
+				          ticks: {
+				            fontColor: '#aaa',
+				            beginAtZero: true,
+				            precision:0
+				          }
+				        }]
+				      },
+				
+				      responsive: false,
+				      maintainAspectRatio: false
+				    }
 		  });
 		  chart2.resize();
-		  $('#samples-element,#samples-number').unblock();
+		  $('#samples-element,#samples-number,#samples-element-2').unblock();
 	  })
 	  .fail(function() {
 		  alert( "error" );
-		  $('#samples-element,#samples-number').unblock();
+		  $('#samples-element,#samples-number,#samples-element-2').unblock();
 	  });
   }
   

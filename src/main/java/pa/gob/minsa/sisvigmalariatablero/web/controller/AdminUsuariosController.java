@@ -31,11 +31,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -526,6 +528,151 @@ public class AdminUsuariosController {
     		redirecTo = "403";
     	}
     	return redirecTo;	
+    }
+    
+    
+    @RequestMapping(value = "/activity/", method = RequestMethod.GET)
+    public String obtenerActividadUsuarios(Model model) throws ParseException { 	
+    	logger.debug("Mostrando Actividad de Usuarios en JSP");
+    	this.visitsService.saveUserPages(this.usuarioService.getUser(SecurityContextHolder.getContext().getAuthentication().getName()),new Date(),"activityuserspage");
+    	return "admin/users/activity";
+	}
+    
+    
+    @RequestMapping(value = "/activeusers/", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody List<Object[]> obtenerActividadUsuarios(@RequestParam(value = "fechaInicio", required = true) String fechaInicio
+    		,@RequestParam(value = "fechaFin", required = true) String fechaFin
+    		) throws ParseException {
+        logger.info("Obteniendo actividad de usuario por periodo");
+        
+        Long desde = null;
+        Long hasta = null;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        
+        if (!fechaInicio.matches("")) desde = formatter.parse(fechaInicio).getTime();
+        if (!fechaFin.matches("")) hasta = formatter.parse(fechaFin).getTime();
+        
+        List<Object[]> datos = usuarioService.getActividadUsuario(desde,hasta);
+        return datos;
+    }
+    
+    @RequestMapping(value = "/pagesvisited/", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody List<Object[]> obtenerPaginasVisitadas(@RequestParam(value = "fechaInicio", required = true) String fechaInicio
+    		,@RequestParam(value = "fechaFin", required = true) String fechaFin
+    		) throws ParseException {
+        logger.info("Obteniendo paginas visitadas por periodo");
+        
+        Long desde = null;
+        Long hasta = null;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        
+        if (!fechaInicio.matches("")) desde = formatter.parse(fechaInicio).getTime();
+        if (!fechaFin.matches("")) hasta = formatter.parse(fechaFin).getTime();
+        
+        List<Object[]> datos = usuarioService.getPaginasVisitadas(desde,hasta);
+        return datos;
+    }
+    
+    @RequestMapping(value = "/activitybyday/", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody List<Object[]> obtenerVisitasxDia(@RequestParam(value = "fechaInicio", required = true) String fechaInicio
+    		,@RequestParam(value = "fechaFin", required = true) String fechaFin
+    		) throws ParseException {
+        logger.info("Obteniendo visitas diarias por periodo");
+        
+        Long desde = null;
+        Long hasta = null;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        
+        if (!fechaInicio.matches("")) desde = formatter.parse(fechaInicio).getTime();
+        if (!fechaFin.matches("")) hasta = formatter.parse(fechaFin).getTime();
+        
+        List<Object[]> datos = usuarioService.getActividadDia(desde,hasta);
+        return datos;
+    }
+    
+    @RequestMapping(value = "/inactives/", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody List<Object[]> obtenerInactivos(@RequestParam(value = "fechaInicio", required = true) String fechaInicio
+    		,@RequestParam(value = "fechaFin", required = true) String fechaFin
+    		) throws ParseException {
+        logger.info("Obteniendo usuarios inactivos por periodo");
+        
+        Long desde = null;
+        Long hasta = null;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        
+        if (!fechaInicio.matches("")) desde = formatter.parse(fechaInicio).getTime();
+        if (!fechaFin.matches("")) hasta = formatter.parse(fechaFin).getTime();
+        
+        List<Object[]> datos = usuarioService.getInactividadUsuario(desde,hasta);
+        return datos;
+    }
+    
+
+    @RequestMapping(value = "/activity/{username}/", method = RequestMethod.GET)
+	public String initViewActivity(@PathVariable("username") String username, Model model) {
+		UserSistema usuarioEditar = this.usuarioService.getUser(username);
+		if(usuarioEditar!=null){
+			model.addAttribute("user",usuarioEditar);
+			return "admin/users/useractivity";
+		}
+		else{
+			return "403";
+		}
+	}
+    
+    
+    @RequestMapping(value = "/activitybydayuser/", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody List<Object[]> obtenerVisitasxDiaUsuario(@RequestParam(value = "username", required = true) String username
+    		,@RequestParam(value = "fechaInicio", required = true) String fechaInicio
+    		,@RequestParam(value = "fechaFin", required = true) String fechaFin
+    		) throws ParseException {
+        logger.info("Obteniendo visitas diarias por periodo");
+        
+        Long desde = null;
+        Long hasta = null;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        
+        if (!fechaInicio.matches("")) desde = formatter.parse(fechaInicio).getTime();
+        if (!fechaFin.matches("")) hasta = formatter.parse(fechaFin).getTime();
+        
+        List<Object[]> datos = usuarioService.getActividadDia(username,desde,hasta);
+        return datos;
+    }
+    
+    @RequestMapping(value = "/pagesvisiteduser/", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody List<Object[]> obtenerPaginasVisitadasUsuario(@RequestParam(value = "username", required = true) String username
+    		,@RequestParam(value = "fechaInicio", required = true) String fechaInicio
+    		,@RequestParam(value = "fechaFin", required = true) String fechaFin
+    		) throws ParseException {
+        logger.info("Obteniendo paginas visitadas por periodo");
+        
+        Long desde = null;
+        Long hasta = null;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        
+        if (!fechaInicio.matches("")) desde = formatter.parse(fechaInicio).getTime();
+        if (!fechaFin.matches("")) hasta = formatter.parse(fechaFin).getTime();
+        
+        List<Object[]> datos = usuarioService.getPaginasVisitadas(username,desde,hasta);
+        return datos;
+    }
+    
+    @RequestMapping(value = "/accessesuser/", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody List<Object[]> obtenerAccesosUsuario(@RequestParam(value = "username", required = true) String username
+    		,@RequestParam(value = "fechaInicio", required = true) String fechaInicio
+    		,@RequestParam(value = "fechaFin", required = true) String fechaFin
+    		) throws ParseException {
+        logger.info("Obteniendo paginas visitadas por periodo");
+        
+        Long desde = null;
+        Long hasta = null;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        
+        if (!fechaInicio.matches("")) desde = formatter.parse(fechaInicio).getTime();
+        if (!fechaFin.matches("")) hasta = formatter.parse(fechaFin).getTime();
+        
+        List<Object[]> datos = usuarioService.getUserAccess(username,desde,hasta);
+        return datos;
     }
    
     

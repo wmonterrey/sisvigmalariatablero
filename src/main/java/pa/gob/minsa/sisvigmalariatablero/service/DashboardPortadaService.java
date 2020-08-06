@@ -667,21 +667,21 @@ public class DashboardPortadaService {
 		//Por Corregimiento
 		else if(oulevel.equals("correg.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.name, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= mc.pdrfecha and se.fechaFin >= mc.pdrfecha and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.corregimiento.ident =:ouname ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.name";
 		}
 		//Por localidad
 		else if(oulevel.equals("local.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.name, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.ident =:ouname ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.name";
 		}
 		//Por foco
 		else if(oulevel.equals("foci.samp")) {
 			sqlQueryRegionVista = "SELECT mc.pdrMuestraLocalidad.name, count(mc.id)";
-			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.anio=:anio";
+			sqlQueryTiempoWhere = "se.fechaIni <= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and se.fechaFin >= CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END and CASE WHEN mc.fis IS NOT NULL then mc.fis ELSE mc.pdrfecha END between :fechaInicio and :fechaFinal";
 			sqlQueryRegionWhere = " and mc.pdrMuestraLocalidad.ident in (select fl.focoLocalidadId.localidad from FocoLocalidad fl where fl.focoLocalidadId.foco=:ouname and fl.pasive = '0') ";
 			sqlQueryGroupBY = "group by mc.pdrMuestraLocalidad.name";
 		}

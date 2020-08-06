@@ -1,6 +1,7 @@
 package pa.gob.minsa.sisvigmalariatablero.web.controller;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 
@@ -29,7 +30,7 @@ public class DashboardPortadaDatosController {
     private static final Logger logger = LoggerFactory.getLogger(DashboardPortadaDatosController.class);
 
     @RequestMapping(value = "/casos/", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody List<DatosTiempo> obtenerCasosxPeriodo(@RequestParam(value = "anio", required = true) Integer anio,
+    public @ResponseBody List<List<DatosTiempo>> obtenerCasosxPeriodo(@RequestParam(value = "anio", required = true) Integer anio,
     		@RequestParam(value = "oulevel", required = true) String oulevel,
     		@RequestParam(value = "ouname", required = false, defaultValue="") String ouname,
     		@RequestParam(value = "timeview", required = false, defaultValue="") String timeview
@@ -37,12 +38,21 @@ public class DashboardPortadaDatosController {
         logger.info("Obteniendo casos confirmados por periodo");
         
         List<DatosTiempo> datos = dashboardPortadaService.getDatosCasosxPeriodo(anio,oulevel,ouname,timeview);
-        return datos;
+        List<DatosTiempo> datos2 = dashboardPortadaService.getDatosCasosxPeriodo(anio-1,oulevel,ouname,timeview);
+        
+        
+        List<List<DatosTiempo>> aList =  
+                new ArrayList<List<DatosTiempo>>(2);
+        
+        aList.add(datos);
+        aList.add(datos2);
+        
+        return aList;
     }
     
     
     @RequestMapping(value = "/muestras/", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody List<DatosTiempo> obtenerMuestrasxPeriodo(@RequestParam(value = "anio", required = true) Integer anio,
+    public @ResponseBody List<List<DatosTiempo>> obtenerMuestrasxPeriodo(@RequestParam(value = "anio", required = true) Integer anio,
     		@RequestParam(value = "oulevel", required = true) String oulevel,
     		@RequestParam(value = "ouname", required = false, defaultValue="") String ouname,
     		@RequestParam(value = "timeview", required = false, defaultValue="") String timeview
@@ -50,7 +60,15 @@ public class DashboardPortadaDatosController {
         logger.info("Obteniendo muestras por periodo");
         
         List<DatosTiempo> datos = dashboardPortadaService.getDatosMuestrasxPeriodo(anio,oulevel,ouname,timeview);
-        return datos;
+        List<DatosTiempo> datos2 = dashboardPortadaService.getDatosMuestrasxPeriodo(anio-1,oulevel,ouname,timeview);
+        
+        
+        List<List<DatosTiempo>> aList =  
+                new ArrayList<List<DatosTiempo>>(2);
+        
+        aList.add(datos);
+        aList.add(datos2);
+        return aList;
     }
     
     @RequestMapping(value = "/locbusq/", method = RequestMethod.GET, produces = "application/json")

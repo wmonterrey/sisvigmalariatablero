@@ -1,5 +1,6 @@
 package pa.gob.minsa.sisvigmalariatablero.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -259,6 +260,147 @@ public class UsuarioService {
 		query.setParameter("username",username);
 		// Retrieve all
 		return  query.list();
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> getActividadUsuario(Long desde, Long hasta){
+		
+		// Retrieve session from Hibernate
+		Session session = sessionFactory.getCurrentSession();
+		
+		// Create a Hibernate query (HQL)
+		Query query = session.createSQLQuery("SELECT users.username, users.completeName, enabled as habilitado, MAX(lastAccess) AS ultimo, "
+				+ "COUNT(accesses.username) AS total, avg(If(ISNULL(logoutdate),RAND()*(2.2-2)+2 + 1,TIMESTAMPDIFF(MINUTE, loginDate, logoutdate))) as tiempo "
+				+ "FROM users INNER JOIN accesses ON users.username=accesses.username " + 
+				"WHERE DATE(loginDate) between :fechaInicio and :fechaFinal GROUP BY users.username;");
+		if(!(desde==null)) {
+			Timestamp timeStampInicio = new Timestamp(desde);
+			Timestamp timeStampFinal = new Timestamp(hasta);
+			query.setTimestamp("fechaInicio", timeStampInicio);
+			query.setTimestamp("fechaFinal", timeStampFinal);
+		}
+		// Retrieve all
+		return  query.list();
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> getInactividadUsuario(Long desde, Long hasta){
+		
+		// Retrieve session from Hibernate
+		Session session = sessionFactory.getCurrentSession();
+		
+		// Create a Hibernate query (HQL)
+		Query query = session.createSQLQuery("select users.username, users.completeName, enabled, lastAccess FROM users "
+				+ "WHERE username NOT IN (SELECT username FROM accesses WHERE DATE(loginDate) BETWEEN :fechaInicio and :fechaFinal);");
+		if(!(desde==null)) {
+			Timestamp timeStampInicio = new Timestamp(desde);
+			Timestamp timeStampFinal = new Timestamp(hasta);
+			query.setTimestamp("fechaInicio", timeStampInicio);
+			query.setTimestamp("fechaFinal", timeStampFinal);
+		}
+		// Retrieve all
+		return  query.list();
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> getPaginasVisitadas(Long desde, Long hasta){
+		
+		// Retrieve session from Hibernate
+		Session session = sessionFactory.getCurrentSession();
+		
+		// Create a Hibernate query (HQL)
+		Query query = session.createSQLQuery("SELECT messages.es,  COUNT(visitKey) as total FROM pagesvisited inner JOIN messages on pagesvisited.visitKey = messages.messageKey "
+				+ "WHERE DATE(visitDate) between :fechaInicio and :fechaFinal GROUP BY messages.es;");
+		if(!(desde==null)) {
+			Timestamp timeStampInicio = new Timestamp(desde);
+			Timestamp timeStampFinal = new Timestamp(hasta);
+			query.setTimestamp("fechaInicio", timeStampInicio);
+			query.setTimestamp("fechaFinal", timeStampFinal);
+		}
+		// Retrieve all
+		return  query.list();
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> getActividadDia(Long desde, Long hasta){
+		
+		// Retrieve session from Hibernate
+		Session session = sessionFactory.getCurrentSession();
+		
+		// Create a Hibernate query (HQL)
+		Query query = session.createSQLQuery("SELECT DATE(loginDate) as fecha, COUNT(accesses.username) AS total "
+				+ "FROM accesses " + 
+				"WHERE DATE(loginDate) between :fechaInicio and :fechaFinal GROUP BY DATE(loginDate);");
+		if(!(desde==null)) {
+			Timestamp timeStampInicio = new Timestamp(desde);
+			Timestamp timeStampFinal = new Timestamp(hasta);
+			query.setTimestamp("fechaInicio", timeStampInicio);
+			query.setTimestamp("fechaFinal", timeStampFinal);
+		}
+		// Retrieve all
+		return  query.list();
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> getPaginasVisitadas(String user, Long desde, Long hasta){
+		
+		// Retrieve session from Hibernate
+		Session session = sessionFactory.getCurrentSession();
+		
+		// Create a Hibernate query (HQL)
+		Query query = session.createSQLQuery("SELECT messages.es,  COUNT(visitKey) as total FROM pagesvisited inner JOIN messages on pagesvisited.visitKey = messages.messageKey "
+				+ "WHERE username=:user and DATE(visitDate) between :fechaInicio and :fechaFinal GROUP BY messages.es;");
+		query.setParameter("user", user);
+		if(!(desde==null)) {
+			Timestamp timeStampInicio = new Timestamp(desde);
+			Timestamp timeStampFinal = new Timestamp(hasta);
+			query.setTimestamp("fechaInicio", timeStampInicio);
+			query.setTimestamp("fechaFinal", timeStampFinal);
+		}
+		// Retrieve all
+		return  query.list();
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> getActividadDia(String user, Long desde, Long hasta){
+		
+		// Retrieve session from Hibernate
+		Session session = sessionFactory.getCurrentSession();
+		
+		// Create a Hibernate query (HQL)
+		Query query = session.createSQLQuery("SELECT DATE(loginDate) as fecha, COUNT(accesses.username) AS total, avg(If(ISNULL(logoutdate),RAND()*(2.2-2)+2 + 1,TIMESTAMPDIFF(MINUTE, loginDate, logoutdate))) as tiempo "
+				+ "FROM accesses " + 
+				"WHERE username=:user and DATE(loginDate) between :fechaInicio and :fechaFinal GROUP BY DATE(loginDate);");
+		query.setParameter("user", user);
+		if(!(desde==null)) {
+			Timestamp timeStampInicio = new Timestamp(desde);
+			Timestamp timeStampFinal = new Timestamp(hasta);
+			query.setTimestamp("fechaInicio", timeStampInicio);
+			query.setTimestamp("fechaFinal", timeStampFinal);
+		}
+		// Retrieve all
+		return  query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> getUserAccess(String username, Long desde, Long hasta) {
+		// Retrieve session from Hibernate
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery("select username, loginDate, If(ISNULL(logoutdate),RAND()*(2.2-2)+2,TIMESTAMPDIFF(MINUTE, loginDate, logoutdate)) as tiempo FROM accesses where username=:user and DATE(loginDate) between :fechaInicio and :fechaFinal order by loginDate DESC");
+		query.setParameter("user", username);
+		if(!(desde==null)) {
+			Timestamp timeStampInicio = new Timestamp(desde);
+			Timestamp timeStampFinal = new Timestamp(hasta);
+			query.setTimestamp("fechaInicio", timeStampInicio);
+			query.setTimestamp("fechaFinal", timeStampFinal);
+		}
+		return query.list();
 	}
 	
 

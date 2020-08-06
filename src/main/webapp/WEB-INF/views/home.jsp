@@ -254,6 +254,8 @@
 						                      <th></th>
 						                      <th><spring:message code="year" /></th>
 						                      <th><spring:message code="totcases" /></th>
+						                      <th><spring:message code="year" /></th>
+						                      <th><spring:message code="totcases" /></th>
 						                      <th><spring:message code="level" /></th>
 						                    </tr>
 						                  </thead>
@@ -307,6 +309,8 @@
 						              		<thead>
 						                    <tr>
 						                      <th></th>
+						                      <th><spring:message code="year" /></th>
+						                      <th><spring:message code="totsamples" /></th>
 						                      <th><spring:message code="year" /></th>
 						                      <th><spring:message code="totsamples" /></th>
 						                      <th><spring:message code="level" /></th>
